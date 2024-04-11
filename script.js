@@ -88,6 +88,9 @@ function createTestCard(word) {
     const pEngElement = document.createElement('p');
     pEngElement.textContent = word.title;
     divElement.appendChild(pEngElement);
+    const exampleElement = document.createElement('p');
+    exampleElement.textContent = `Пример: ${word.example}`;
+    divElement.appendChild(exampleElement);
     const pRusElement = document.createElement('p');
     pRusElement.textContent = word.translation;
     divElement.appendChild(pRusElement);
