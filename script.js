@@ -88,26 +88,28 @@ totalWord.textContent = arr.length;
 
 let selectedCard;
 
-function createTestCard(text) {
+function createTestCard(word) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
-    const pElement = document.createElement('p');
-    pElement.textContent = text;
-    divElement.append(pElement);
+    
+    const englishParagraph = document.createElement('p');
+    englishParagraph.textContent = word.title;
+    
+    const russianParagraph = document.createElement('p');
+    russianParagraph.textContent = word.translation;
+
+    divElement.append(englishParagraph, russianParagraph);
+    
     divElement.onclick = () => checkTranslationsHandler(divElement);
+    
     return divElement;
 }
-
-flipCard.addEventListener("click", function() {
-    flipCard.classList.toggle("active");
-});
 
 function addCard() {
     const fragment = new DocumentFragment();
     const newArray = [];
     arr.forEach((word) => {
-        newArray.push(createTestCard(word.translation));
-        newArray.push(createTestCard(word.title));
+        newArray.push(createTestCard(word));
     });
     fragment.append(...newArray.sort(() => Math.random() - 0.5));
     examination.innerHTML = "";
@@ -132,7 +134,7 @@ function checkTranslationsHandler(currentCard) {
         selectedCard = currentCard;
     } else {
         const wordObject = arr.find(word => word.translation.trim() === selectedCard.textContent.trim() || word.title.trim() === selectedCard.textContent.trim());
-        if (wordObject.translation.trim() === currentCard.textContent.trim() || wordObject.title.trim() === currentCard.textContent.trim()) {
+        if (wordObject.translation.trim() === currentCard.querySelector('p:nth-child(2)').textContent.trim() || wordObject.title.trim() === currentCard.querySelector('p:nth-child(2)').textContent.trim()) {
             currentCard.style.pointerEvents = "none";
             currentCard.classList.add('correct');
             currentCard.classList.add('fade-out');
