@@ -8,7 +8,7 @@ const cardFront = document.querySelector('#card-front');
 const frontTitle = cardFront.querySelector('h1');
 const cardBack = document.querySelector('#card-back');
 const backTitle = cardBack.querySelector('h1');
-const example = cardBack.querySelector('span');
+const example = cardFront.querySelector('span'); // Changed to cardFront
 const back = document.querySelector('#back');
 const testing = document.querySelector('#exam');
 const next = document.querySelector('#next');
@@ -47,7 +47,7 @@ function prepareCard(word) {
     currentWord.textContent = currentIndex + 1;
     frontTitle.textContent = word.title;
     backTitle.textContent = word.translation;
-    example.textContent = word.example;
+    example.textContent = word.example; // Display example on the front side
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 }
 
