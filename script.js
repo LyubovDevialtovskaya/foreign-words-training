@@ -10,7 +10,7 @@ const wordsTranslate = ['juice пример: I like orange juice.',
     'journey пример: Journey of a lifetime!'
 ];
 
-let i = 0;
+let currentIndex = 0;
 const titleFront = cardFront.querySelector('h1');
 const titleBack = cardBack.querySelector('h1');
 
@@ -18,114 +18,98 @@ flipCard.addEventListener("click", function(event) {
     flipCard.classList.toggle('active');
 });
 
-cardFront.textContent = words[i];
-cardBack.textContent = wordsTranslate[i];
-const buttonNext = document.querySelector('#next');
-const buttonBack = document.querySelector('#back');
-const currentWord = document.querySelector('#current-word');
-
-buttonNext.addEventListener("click", function(event) {
-    i++;
-    if (i == words.length - 1) {
-        buttonNext.disabled = true;
-    } else {
-        buttonNext.disabled = false;
+function showCard(index) {
+    if (index >= 0 && index < words.length) {
+        cardFront.textContent = words[index];
+        cardBack.textContent = wordsTranslate[index];
+        currentIndex = index;
     }
+}
 
-    if (i === 0) {
-        buttonBack.disabled = true;
-    } else {
-        buttonBack.disabled = false;
-    }
+function showNextCard() {
+    currentIndex++;
+    showCard(currentIndex);
+    updateNavigationButtons();
+}
 
-    cardFront.textContent = words[i];
-    cardBack.textContent = wordsTranslate[i];
+function showPreviousCard() {
+    currentIndex--;
+    showCard(currentIndex);
+    updateNavigationButtons();
+}
 
-    currentWord.textContent = i + 1;
-});
-buttonBack.addEventListener("click", function(event) {
-  
-    i--;
-    if (i === 0) {
-        buttonBack.disabled = true;
-    } else {
-        buttonBack.disabled = false;
-    }
+function updateNavigationButtons() {
+    document.querySelector('#next').disabled = currentIndex === words.length - 1;
+    document.querySelector('#back').disabled = currentIndex === 0;
+    document.querySelector('#current-word').textContent = currentIndex + 1;
+}
 
-    if (i >= words.length - 1) {
-        buttonNext.disabled = true;
-    } else {
-        buttonNext.disabled = false;
-    }
-    cardFront.textContent = words[i];
-    cardBack.textContent = wordsTranslate[i];
-
-    currentWord.textContent = i + 1;
-});
+showCard(currentIndex);
+updateNavigationButtons();
 
 const examButton = document.querySelector('#exam');
 const firstPage = document.querySelector('.content');
 const studyMode = document.querySelector('#study-mode');
+const containerCards = document.querySelector('#exam-cards');
+
 examButton.addEventListener("click", function(event) {
     firstPage.classList.add('hidden');
     studyMode.classList.add('hidden');
     containerCards.classList.remove('hidden');
+    containerCards.innerHTML = ''; // Clear container before showing cards
+
+    const shuffledWords = shuffleArray([...words]);
+    const shuffledTranslations = shuffleArray([...wordsTranslate]);
+
+    for (let i = 0; i < shuffledWords.length; i++) {
+        const card = document.createElement('div');
+        card.classList.add('flip-card');
+        card.innerHTML = `
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <h1>${shuffledWords[i]}</h1>
+                </div>
+                <div class="flip-card-back">
+                    <h1>${shuffledTranslations[i]}</h1>
+                </div>
+            </div>
+        `;
+        card.addEventListener('click', flipCard);
+        containerCards.appendChild(card);
+    }
 });
 
-const cards = [{
-        rus: "сок",
-        eng: "juice",
+function flipCard(event) {
+    const clickedCard = event.currentTarget;
+    clickedCard.classList.toggle('active');
 
-    },
-    {
-        rus: "солнце",
-        eng: "sun",
-    },
-    {
-        rus: "жизнь",
-        eng: "life",
-    },
-    {
-        rus: "платье",
-        eng: "dress",
-    },
-    {
-        rus: "путешествие",
-        eng: "journey",
-    },
-];
+    const allCards = document.querySelectorAll('.flip-card');
+    const selectedCards = Array.from(allCards).filter(card => card.classList.contains('active'));
 
-const containerCards = document.createElement('div');
-containerCards.classList.add('container-cards');
-containerCards.classList.add('hidden');
-examCardsContainer.append(containerCards);
-const examCardsContainer = document.querySelector('#exam-cards');
+    if (selectedCards.length === 2) {
+        const firstCard = selectedCards[0];
+        const secondCard = selectedCards[1];
 
-let cardTemplate = document.querySelector('#card-template');
+        if (firstCard.querySelector('h1').textContent === secondCard.querySelector('h1').textContent) {
+            setTimeout(() => {
+                firstCard.classList.add('fade-out');
+                secondCard.classList.add('fade-out');
+            }, 500);
+        } else {
+            setTimeout(() => {
+                selectedCards.forEach(card => card.classList.remove('active'));
+                secondCard.classList.add('wrong');
+                setTimeout(() => {
+                    secondCard.classList.remove('wrong');
+                }, 500);
+            }, 1000);
+        }
+    }
 
-function prepareItemCards(itemCards) {
-    const { rus, eng } = itemCards;
-    const item = cardTemplate.content.cloneNode(true);
-    item.querySelector(".rus").textContent = rus;
-    item.querySelector(".eng").textContent = eng;
-    return item;
-};
-
-function paintCards(side) {
-    side.forEach((item) => {
-        containerCards.append(prepareItemCards(item));
-    });
-}
-
-paintCards(cards);
-
-const shuffledCards = [...cards];
-shuffleArray(shuffledCards);
-
-function paintShuffledCards(cards) {
-    cards.forEach((item) => {
-        containerCards.append(prepareItemCards(item));
-    });
+    const remainingCards = document.querySelectorAll('.flip-card:not(.fade-out)');
+    if (remainingCards.length === 0) {
+        alert('Проверка знаний завершена успешно!');
+    }
 }
 
 function shuffleArray(array) {
@@ -133,39 +117,5 @@ function shuffleArray(array) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
+    return array;
 }
-
-const shuffleButton = document.querySelector('#shuffle');
-shuffleButton.addEventListener('click', function() {
-    containerCards.innerHTML = '';
-    shuffleArray(shuffledCards);
-    paintShuffledCards(shuffledCards);
-});
-
-let firstClick = null;
-
-containerCards.addEventListener("click", function(event) {
-    const clickedCard = event.target.closest('.flip-card');
-    if (!firstClick) {
-        firstClick = clickedCard;
-        firstClick.classList.add('correct');
-    } else {
-        const secondClick = clickedCard;
-        secondClick.classList.add('correct');
-
-        const firstCardText = firstClick.querySelector('.eng').textContent;
-        const secondCardText = secondClick.querySelector('.eng').textContent;
-
-        if (firstCardText === secondCardText) {
-            firstClick.classList.add('fade-out');
-            secondClick.classList.add('fade-out');
-        } else {
-            secondClick.classList.add('wrong');
-            setTimeout(() => {
-                secondClick.classList.remove('wrong');
-            }, 500);
-        }
-
-        firstClick = null;
-    }
-});
