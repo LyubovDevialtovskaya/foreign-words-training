@@ -208,7 +208,6 @@ function displayWordStats() {
     resultsModal.appendChild(wordStats);
 }
 
-)
 function saveProgress() {
     localStorage.setItem('currentIndex', currentIndex);
 }
