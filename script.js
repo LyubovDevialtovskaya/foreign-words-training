@@ -82,22 +82,12 @@ totalWord.textContent = arr.length;
 
 let selectedCard;
 
-function createTestCard(word) {
+function createTestCard(text) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
-
-    const pEngElement = document.createElement('p');
-    pEngElement.textContent = word.title;
-    divElement.appendChild(pEngElement);
-
-    const pRusElement = document.createElement('p');
-    pRusElement.textContent = word.translation;
-    divElement.appendChild(pRusElement);
-
-    const pExampleElement = document.createElement('p');
-    pExampleElement.textContent = word.example; // Добавляем пример
-    divElement.appendChild(pExampleElement);
-
+    const pElement = document.createElement('p');
+    pElement.textContent = text;
+    divElement.append(pElement);
     divElement.onclick = () => checkTranslationsHandler(divElement);
     return divElement;
 }
