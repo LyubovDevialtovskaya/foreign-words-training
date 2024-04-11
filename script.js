@@ -45,12 +45,22 @@ let currentIndex = 0;
 
 function prepareCard(word) {
     currentWord.textContent = currentIndex + 1;
-    frontTitle.textContent = word.title;
-    backTitle.textContent = word.translation;
-    example.textContent = word.example; 
-    cardBack.querySelector('span').textContent = word.example; 
+    if (flipCard.classList.contains('active')) {
+       
+        frontTitle.textContent = word.title;
+        backTitle.textContent = word.translation;
+        example.textContent = word.example; 
+        cardBack.querySelector('span').textContent = ''; 
+    } else {
+        
+        frontTitle.textContent = word.translation;
+        backTitle.textContent = word.title;
+        example.textContent = ''; 
+        cardBack.querySelector('span').textContent = word.example; 
+    }
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 }
+
 
 prepareCard(arr[currentIndex]);
 
