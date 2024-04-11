@@ -51,7 +51,7 @@ function prepareCard(word) {
     } else {
         frontTitle.textContent = word.title;
         backTitle.textContent = word.translation;
-        example.textContent = ""; // Очищаем пример, так как он будет показан на передней стороне
+        example.textContent = ""; 
     }
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 
