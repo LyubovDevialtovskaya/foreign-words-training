@@ -1,6 +1,22 @@
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 const flipCard = document.querySelector('.flip-card');
 const cardFront = document.querySelector('#card-front h1');
 const cardBack = document.querySelector('#card-back h1');
+const nextButton = document.querySelector('#next');
+const backButton = document.querySelector('#back');
+const currentWordDisplay = document.querySelector('#current-word');
+const examButton = document.querySelector('#exam');
+const firstPage = document.querySelector('.content');
+const studyMode = document.querySelector('#study-mode');
+const containerCards = document.querySelector('#exam-cards');
 
 const words = ["сок", "солнце", "жизнь", "платье", "путешествие"];
 const wordsTranslate = ['juice пример: I like orange juice.',
@@ -11,12 +27,6 @@ const wordsTranslate = ['juice пример: I like orange juice.',
 ];
 
 let currentIndex = 0;
-const titleFront = cardFront.querySelector('h1');
-const titleBack = cardBack.querySelector('h1');
-
-flipCard.addEventListener("click", function(event) {
-    flipCard.classList.toggle('active');
-});
 
 function showCard(index) {
     if (index >= 0 && index < words.length) {
@@ -29,56 +39,46 @@ function showCard(index) {
 
 function showNextCard() {
     if (currentIndex < words.length - 1) {
-        currentIndex++;
-        showCard(currentIndex);
+        showCard(currentIndex + 1);
     }
 }
 
 function showPreviousCard() {
     if (currentIndex > 0) {
-        currentIndex--;
-        showCard(currentIndex);
+        showCard(currentIndex - 1);
     }
 }
 
 function updateNavigationButtons() {
-    document.querySelector('#next').disabled = currentIndex === words.length - 1;
-    document.querySelector('#back').disabled = currentIndex === 0;
-    document.querySelector('#current-word').textContent = currentIndex + 1;
+    nextButton.disabled = currentIndex === words.length - 1;
+    backButton.disabled = currentIndex === 0;
+    currentWordDisplay.textContent = currentIndex + 1;
 }
-
-showCard(currentIndex);
-
-const examButton = document.querySelector('#exam');
-const firstPage = document.querySelector('.content');
-const studyMode = document.querySelector('#study-mode');
-const containerCards = document.querySelector('#exam-cards');
 
 examButton.addEventListener("click", function(event) {
     firstPage.classList.add('hidden');
     studyMode.classList.add('hidden');
     containerCards.classList.remove('hidden');
-    containerCards.innerHTML = ''; 
+    containerCards.innerHTML = '';
 
-    const shuffledWords = shuffleArray([...words]);
-    const shuffledTranslations = shuffleArray([...wordsTranslate]);
+    const shuffledIndexes = shuffleArray(Array.from(Array(words.length).keys()));
 
-    for (let i = 0; i < shuffledWords.length; i++) {
+    shuffledIndexes.forEach(index => {
         const card = document.createElement('div');
         card.classList.add('flip-card');
         card.innerHTML = `
             <div class="flip-card-inner">
                 <div class="flip-card-front">
-                    <h1>${shuffledWords[i]}</h1>
+                    <h1>${words[index]}</h1>
                 </div>
                 <div class="flip-card-back">
-                    <h1>${shuffledTranslations[i]}</h1>
+                    <h1>${wordsTranslate[index]}</h1>
                 </div>
             </div>
         `;
         card.addEventListener('click', flipCard);
         containerCards.appendChild(card);
-    }
+    });
 });
 
 function flipCard(event) {
@@ -114,10 +114,9 @@ function flipCard(event) {
     }
 }
 
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
+flipCard.addEventListener("click", function(event) {
+    flipCard.classList.toggle('active');
+});
+
+showCard(currentIndex);
+updateNavigationButtons();
