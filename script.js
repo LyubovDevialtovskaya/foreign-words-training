@@ -2,7 +2,6 @@ const currentWord = document.querySelector('#current-word');
 const totalWord = document.querySelector('#total-word');
 const wordsProgress = document.querySelector('#words-progress');
 const shuffleWords = document.querySelector('#shuffle-words');
-const examProgress = document.querySelector('#exam-progress');
 const slider = document.querySelector('.slider');
 const flipCard = document.querySelector('.flip-card');
 const cardFront = document.querySelector('#card-front');
@@ -44,11 +43,11 @@ slider.addEventListener("click", function() {
 
 let currentIndex = 0;
 
-function prepareCard({title, translation, example}) {
+function prepareCard(word) {
     currentWord.textContent = currentIndex + 1;
-    frontTitle.textContent = title;
-    backTitle.textContent = translation;
-    example.textContent = example;
+    frontTitle.textContent = word.title;
+    backTitle.textContent = word.translation;
+    example.textContent = word.example;
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 }
 
@@ -81,11 +80,11 @@ totalWord.textContent = arr.length;
 
 let selectedCard;
 
-function createTestCard(object) {
+function createTestCard(text) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
     const pElement = document.createElement('p');
-    pElement.textContent = object;
+    pElement.textContent = text;
     divElement.append(pElement);
     divElement.onclick = () => checkTranslationsHandler(divElement);
     return divElement;
@@ -94,9 +93,9 @@ function createTestCard(object) {
 function addCard() {
     const fragment = document.createDocumentFragment();
     const newArray = [];
-    arr.forEach((array) => {
-        newArray.push(createTestCard(array.translation));
-        newArray.push(createTestCard(array.title));
+    arr.forEach((word) => {
+        newArray.push(createTestCard(word.translation));
+        newArray.push(createTestCard(word.title));
     });
     fragment.append(...newArray.sort(() => Math.random() - 0.5));
     examination.innerHTML = "";
