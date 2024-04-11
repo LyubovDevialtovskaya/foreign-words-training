@@ -121,11 +121,10 @@ examButton.addEventListener("click", function() {
 
         
         
-        /*
+    
         const translation = document.createElement('p');
-        translation.textContent = card.translateWord;*/
+        translation.textContent = card.translateWord;
         
-        //console.log(examCard)
          
         
         return allExamCards;
@@ -135,8 +134,6 @@ examButton.addEventListener("click", function() {
   createCardsGrid();
 });
 
-
-/*
     function getRandomIndex() {
         for ( let i = 0; i < cards.length ; i++ ) {
             return Math.floor(Math.random() * cards.length)    
@@ -144,10 +141,7 @@ examButton.addEventListener("click", function() {
     }
     getRandomIndex()    
     console.log([i])
-    */
-    //console.log(cards[i])
-
-    /*
+    
     for (i = 0, i < cards.length; i++;) {
         let randomIndex = Math.floor(Math.random() * cards.length)
         let temp = cards.length[i];
@@ -161,8 +155,6 @@ examButton.addEventListener("click", function() {
     })
 
     
-
-    /*
     function createCardsGrid() {
 
 
@@ -199,7 +191,7 @@ examButton.addEventListener("click", function() {
             translationCards.append(translation);
             
             allExamCards.append(translationCards);
-            //console.log(translation)
+    
 
             return translationCards;  
 
@@ -209,11 +201,7 @@ examButton.addEventListener("click", function() {
     }
     
     createCardsGrid();
-  
-});
-*/
 
-/*
     function getRandomIndex() {
         for ( let i = 0; i < cards.length ; i++ ) {
             return Math.floor(Math.random() * cards.length)    
@@ -221,10 +209,10 @@ examButton.addEventListener("click", function() {
     }
     getRandomIndex()    
     console.log([i])
-    */
-    //console.log(cards[i])
+    
+ 
 
-    /*
+    
     for (i = 0, i < cards.length; i++;) {
         let randomIndex = Math.floor(Math.random() * cards.length)
         let temp = cards.length[i];
@@ -236,14 +224,6 @@ examButton.addEventListener("click", function() {
     cards.forEach((card) => {
          console.log(card);
     })
-   */
-   
-    
-   
-
-
-    /*
-    //word.textContent = card.translateWord;
 
     const examCards = item => {
         const examCardsEngWord = document.createElement('h1');
@@ -254,9 +234,9 @@ examButton.addEventListener("click", function() {
 
     examCards(cards[0]);
     examCards.append(item)
-    */
+    
 
-    /*
+    
     cards.forEach((item) => {
         item.classList.add('card');
 
@@ -266,15 +246,7 @@ examButton.addEventListener("click", function() {
         console.log(itemExamCards)
         examCards.append(itemExamCards);
   
-    })*/
-
-//Режим проверки знаний
-//Отображаются карточки слов и их переводов (определений) в случайном порядке «рубашками вверх»
-
-
-
-/*
-//I write down the words, translate, example - Записываю слова, перевод, примеры
+    })
 
 class examCard {
 
@@ -292,14 +264,11 @@ const cat = new Word('cat', 'кот', 'Your cat shows affection to you.');
 const home = new Word('home', 'дом', 'Every individual plans to have a home someday.');
 
 const arrayWords = [apple, street, popcorn, cat, home];
-//Parameter output - Вывод параметров
+
 console.log(this.Word.engWord)
-//console.log(apple.translateWord)
-//console.log(apple.example)
 
-*/
 
-/*
+
         cards.forEach((card) => {
 
             const duplicatedCards = cards.slice(0);
@@ -317,11 +286,7 @@ console.log(this.Word.engWord)
             return duplicatedCards;  
 
         })
-        */
-
-       
-        //const duplicatedCards = cards.slice(0);
-        //console.log(duplicatedCards)
+    
 
 
 
