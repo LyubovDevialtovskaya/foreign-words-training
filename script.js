@@ -37,20 +37,17 @@ const words = [
 
 let currentIndex = 0;
 
-function prepareCard(word) {
-    currentWordElement.textContent = currentIndex + 1;
-    if (flipCardElement.classList.contains('active')) {
-        frontTitleElement.textContent = word.title;
-        backTitleElement.textContent = word.translation;
-        exampleElement.textContent = word.example; 
-    } else {
+function prepareCard(word, flipped) {
+    if (flipped) {
         frontTitleElement.textContent = word.translation;
         backTitleElement.textContent = word.title;
         exampleElement.textContent = ''; 
+    } else {
+        frontTitleElement.textContent = word.title;
+        backTitleElement.textContent = word.translation;
+        exampleElement.textContent = word.example; 
     }
-    wordsProgressElement.value = (currentIndex + 1) / words.length * 100;
 }
-
 function goToNextWord() {
     currentIndex++;
     prepareCard(words[currentIndex]);
@@ -80,11 +77,15 @@ function shuffleWords() {
     prepareCard(words[currentIndex]);
 }
 
-function createTestCard(wordText) {
+function createTestCard(word, flipped) {
     const cardElement = document.createElement('div');
     cardElement.classList.add('card');
     const paragraphElement = document.createElement('p');
-    paragraphElement.textContent = wordText;
+    if (flipped) {
+        paragraphElement.textContent = word.translation;
+    } else {
+        paragraphElement.textContent = word.title;
+    }
     cardElement.append(paragraphElement);
     cardElement.onclick = () => checkTranslationsHandler(cardElement);
     return cardElement;
@@ -94,13 +95,15 @@ function addCardsToExamination() {
     const fragment = document.createDocumentFragment();
     const newCardElements = [];
     words.forEach((word) => {
-        newCardElements.push(createTestCard(word.translation));
-        newCardElements.push(createTestCard(word.title));
+        newCardElements.push(createTestCard(word, false));
+        newCardElements.push(createTestCard(word, true));
     });
     fragment.append(...newCardElements.sort(() => Math.random() - 0.5));
     examinationSection.innerHTML = "";
     examinationSection.append(fragment);
+    prepareCard(words[currentIndex], false);
 }
+
 
 function checkTranslationsHandler(currentCard) {
     if (selectedCard === null) {
