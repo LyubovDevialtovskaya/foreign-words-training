@@ -23,19 +23,22 @@ function showCard(index) {
         cardFront.textContent = words[index];
         cardBack.textContent = wordsTranslate[index];
         currentIndex = index;
+        updateNavigationButtons();
     }
 }
 
 function showNextCard() {
-    currentIndex++;
-    showCard(currentIndex);
-    updateNavigationButtons();
+    if (currentIndex < words.length - 1) {
+        currentIndex++;
+        showCard(currentIndex);
+    }
 }
 
 function showPreviousCard() {
-    currentIndex--;
-    showCard(currentIndex);
-    updateNavigationButtons();
+    if (currentIndex > 0) {
+        currentIndex--;
+        showCard(currentIndex);
+    }
 }
 
 function updateNavigationButtons() {
@@ -45,7 +48,6 @@ function updateNavigationButtons() {
 }
 
 showCard(currentIndex);
-updateNavigationButtons();
 
 const examButton = document.querySelector('#exam');
 const firstPage = document.querySelector('.content');
@@ -56,7 +58,7 @@ examButton.addEventListener("click", function(event) {
     firstPage.classList.add('hidden');
     studyMode.classList.add('hidden');
     containerCards.classList.remove('hidden');
-    containerCards.innerHTML = ''; // Clear container before showing cards
+    containerCards.innerHTML = ''; 
 
     const shuffledWords = shuffleArray([...words]);
     const shuffledTranslations = shuffleArray([...wordsTranslate]);
