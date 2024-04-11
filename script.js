@@ -41,8 +41,6 @@ flipCard.addEventListener("click", function() {
 });
 
 let currentIndex = 0;
-let startTime; // Добавляем переменную для отслеживания времени начала тестирования
-let endTime; // Добавляем переменную для отслеживания времени завершения тестирования
 
 function prepareCard(word) {
     currentWord.textContent = currentIndex + 1;
@@ -119,7 +117,6 @@ function addCard() {
 testing.addEventListener('click', function() {
     studying.classList.add('hidden');
     examination.classList.remove('hidden');
-    startTime = new Date(); // Сохраняем время начала тестирования
     addCard();
 });
 
@@ -148,10 +145,9 @@ function checkTranslationsHandler(currentCard) {
                 }
             });
             if (cardsFaded) {
-                endTime = new Date(); // Сохраняем время завершения тестирования
-                const durationInSeconds = (endTime - startTime) / 1000; // Продолжительность тестирования в секундах
-                console.log(`Проверка знаний завершена успешно! Продолжительность тестирования: ${durationInSeconds} сек.`); // Выводим продолжительность тестирования в консоль
-                alert(`Проверка знаний завершена успешно! Продолжительность тестирования: ${durationInSeconds} сек.`); // Выводим продолжительность тестирования
+                setTimeout(() => {
+                    alert('Проверка знаний завершена успешно!');
+                }, 1000);
             }
         } else {
             selectedCard.classList.add('correct');
