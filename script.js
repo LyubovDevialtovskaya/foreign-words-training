@@ -25,6 +25,7 @@ let endTime = null;
 let correctCount = 0;
 let incorrectCount = 0;
 let currentIndex = 0;
+let intervalId = null; 
 
 let cards = [
     { engWord: 'juice', translateWord: 'сок', example: 'I like orange juice.' },
@@ -34,33 +35,52 @@ let cards = [
     { engWord: 'journey', translateWord: 'путешествие', example: 'Journey of a lifetime!' },
 ];
 
-function setCard(card) {
-    cardFrontContent.textContent = card.engWord;
-    cardBackTranslate.textContent = card.translateWord;
-    cardBackExample.textContent = card.example;
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
-function updateProgress() {
+function updateLocalStorage() {
+    localStorage.setItem('currentWordIndex', currentIndex);
+    localStorage.setItem('cardsOrder', JSON.stringify(cards.map(card => card.engWord)));
+}
+
+function loadFromLocalStorage() {
+    currentIndex = parseInt(localStorage.getItem('currentWordIndex')) || 0;
+    const savedOrder = JSON.parse(localStorage.getItem('cardsOrder'));
+    if (savedOrder) {
+        cards = savedOrder.map(word => cards.find(card => card.engWord === word));
+}
+
+function updateStudyProgress() {
     const percent = ((currentIndex + 1) / cards.length) * 100;
     wordsProgress.textContent = `${Math.round(percent)}%`;
 }
 
+function updateExamProgress() {
+    const totalCards = correctCount + incorrectCount;
+    const percentCorrect = totalCards === 0 ? 0 : (correctCount / totalCards) * 100;
+    correctPercent.textContent = `${Math.round(percentCorrect)}%`;
+    examProgress.textContent = `${totalCards} / ${cards.length}`;
+}
 function startTimer() {
     startTime = new Date().getTime();
+    intervalId = setInterval(() => {
+        const currentTime = new Date().getTime();
+        const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+        timer.textContent = `${elapsedTime} сек`;
+    }, 1000);
 }
 
 function stopTimer() {
-    endTime = new Date().getTime();
-    const timeDiff = endTime - startTime;
+    clearInterval(intervalId);
+    const currentTime = new Date().getTime();
+    const timeDiff = currentTime - startTime;
     const seconds = Math.floor(timeDiff / 1000);
     timer.textContent = `${seconds} сек`;
-}
-
-function updateExamProgress() {
-    const totalCards = correctCount + incorrectCount;
-    const percentCorrect = (correctCount / totalCards) * 100;
-    correctPercent.textContent = `${Math.round(percentCorrect)}%`;
-    examProgress.textContent = `${totalCards} / ${cards.length}`;
 }
 
 function showResults() {
@@ -73,6 +93,8 @@ function showResults() {
             <p>${card.engWord}</p>
             <p>${card.translateWord}</p>
             <p>${card.example}</p>
+            <p>Correct: ${card.correctCount || 0}</p>
+            <p>Incorrect: ${card.incorrectCount || 0}</p>
         `;
         resultsContainer.appendChild(resultItem);
     });
@@ -80,25 +102,6 @@ function showResults() {
     resultsModal.style.display = 'block';
 
     alert('Поздравляем! Вы успешно завершили проверку знаний.');
-}
-
-function createTestCards() {
-    allExamCards.innerHTML = ''; // Clear existing cards
-    const shuffledCards = shuffleArray(cards.concat(cards));
-    shuffledCards.forEach(card => {
-        const testCard = document.createElement('div');
-        testCard.classList.add('test-card');
-        const word = document.createElement('p');
-        word.textContent = card.engWord;
-        word.classList.add('word');
-        testCard.appendChild(word);
-        const translation = document.createElement('p');
-        translation.textContent = card.translateWord;
-        translation.classList.add('translation');
-        testCard.appendChild(translation);
-        testCard.addEventListener('click', () => handleCardClick(testCard, card));
-        allExamCards.appendChild(testCard);
-    });
 }
 
 function handleCardClick(cardElement, card) {
@@ -120,6 +123,9 @@ function handleCardClick(cardElement, card) {
                     checkAllCardsMatched();
                 }, 500);
             }, 500);
+            firstCard.correctCount = (firstCard.correctCount || 0) + 1;
+            secondCard.correctCount = (secondCard.correctCount || 0) + 1;
+            correctCount += 2;
         } else {
             cardElement.classList.add('wrong');
             setTimeout(() => {
@@ -132,56 +138,48 @@ function handleCardClick(cardElement, card) {
                 firstCard = null;
                 secondCard = null;
             }, 500);
+            firstCard.incorrectCount = (firstCard.incorrectCount || 0) + 1;
+            secondCard.incorrectCount = (secondCard.incorrectCount || 0) + 1;
+            incorrectCount += 2;
         }
+        updateExamProgress();
     }
+    updateLocalStorage(); 
 }
 
-function checkAllCardsMatched() {
-    const remainingCards = document.querySelectorAll('.test-card');
-    if (remainingCards.length === 0) {
-        stopTimer();
-        showResults();
-    }
-}
 
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
-function shuffleCards() {
-    currentIndex = 0;
-    cards = shuffleArray(cards);
-    createTestCards(); 
-    setCard(cards[currentIndex]);
-    updateProgress();
-}
-
-function goBack() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        setCard(cards[currentIndex]);
-        updateProgress();
-    }
-}
-
-function goForward() {
-    if (currentIndex < cards.length - 1) {
-        currentIndex++;
-        setCard(cards[currentIndex]);
-        updateProgress();
-    }
+function createTestCards() {
+    allExamCards.innerHTML = ''; 
+    const shuffledCards = shuffleArray(cards.concat(cards));
+    shuffledCards.forEach(card => {
+        const testCard = document.createElement('div');
+        testCard.classList.add('test-card');
+        const word = document.createElement('p');
+        word.textContent = card.engWord;
+        word.classList.add('word');
+        testCard.appendChild(word);
+        const translation = document.createElement('p');
+        translation.textContent = card.translateWord;
+        translation.classList.add('translation');
+        testCard.appendChild(translation);
+        testCard.addEventListener('click', () => handleCardClick(testCard, card));
+        allExamCards.appendChild(testCard);
+    });
 }
 
 nextButton.addEventListener("click", goForward);
 backButton.addEventListener("click", goBack);
-shuffleButton.addEventListener("click", shuffleCards);
+
+shuffleButton.addEventListener("click", () => {
+    currentIndex = 0;
+    cards = shuffleArray(cards);
+    updateStudyProgress();
+    setCard(cards[currentIndex]);
+    updateLocalStorage(); 
+});
 
 examButton.addEventListener('click', () => {
-   
+    
     createTestCards();
     
     firstCard = null;
@@ -190,11 +188,14 @@ examButton.addEventListener('click', () => {
     correctCount = 0;
     incorrectCount = 0;
     currentIndex = 0;
-    updateProgress();
     updateExamProgress();
     timer.textContent = '0 сек'; 
-    studyCards.style.display = 'none';
+    startTimer(); 
 });
 
-createTestCards();
-startTimer();
+loadFromLocalStorage();
+
+
+setCard(cards[currentIndex]);
+updateStudyProgress(); 
+}
