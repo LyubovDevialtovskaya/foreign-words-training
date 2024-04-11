@@ -134,4 +134,27 @@ document.addEventListener("DOMContentLoaded", function () {
     nextButton.addEventListener("click", showNextCard);
     examButton.addEventListener("click", startExam);
   });
+  // Функция сохранения прогресса в localStorage
+function saveProgress() {
+    localStorage.setItem("currentWordIndex", currentWordIndex);
+    localStorage.setItem("correctAnswers", correctAnswers);
+    localStorage.setItem("incorrectAnswers", incorrectAnswers);
+  }
+  
+  // Функция загрузки прогресса из localStorage
+  function loadProgress() {
+    currentWordIndex = parseInt(localStorage.getItem("currentWordIndex")) || 0;
+    correctAnswers = parseInt(localStorage.getItem("correctAnswers")) || 0;
+    incorrectAnswers = parseInt(localStorage.getItem("incorrectAnswers")) || 0;
+  }
+  
+  // Проверяем, есть ли сохраненный прогресс в localStorage
+  if (localStorage.getItem("currentWordIndex") !== null) {
+    loadProgress();
+    updateStudyModeUI();
+    updateExamModeUI();
+  }
+  
+  // Сохраняем прогресс при закрытии страницы
+  window.addEventListener("beforeunload", saveProgress);
   
