@@ -103,7 +103,7 @@ function addCardsToExamination() {
 }
 
 function checkTranslationsHandler(currentCard) {
-    if (!selectedCard) {
+    if (selectedCard === null) {
         const cards = document.querySelectorAll('.card');
         cards.forEach(card => {
             card.classList.remove('correct', 'wrong');
@@ -145,7 +145,7 @@ function checkTranslationsHandler(currentCard) {
     }
 }
 
-let selectedCard;
+let selectedCard = null;
 
 backButton.addEventListener("click", goToPreviousWord);
 nextButton.addEventListener("click", goToNextWord);
