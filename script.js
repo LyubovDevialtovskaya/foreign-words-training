@@ -152,6 +152,9 @@ function checkTranslationsHandler(currentCard) {
                 const durationInSeconds = (endTime - startTime) / 1000; // Продолжительность тестирования в секундах
                 console.log(`Проверка знаний завершена успешно! Продолжительность тестирования: ${durationInSeconds} сек.`); // Выводим продолжительность тестирования в консоль
                 alert(`Проверка знаний завершена успешно! Продолжительность тестирования: ${durationInSeconds} сек.`); // Выводим продолжительность тестирования
+                const correctPercentage = Math.round((arr.length - cards.length / 2) / arr.length * 100); // Процент правильно отвеченных слов
+                document.querySelector('#correct-percent').textContent = `${correctPercentage}%`; // Обновляем процент правильных ответов
+                document.querySelector('#exam-progress').value = correctPercentage; // Обновляем прогресс
             }
         } else {
             selectedCard.classList.add('correct');
