@@ -40,7 +40,6 @@ flipCard.addEventListener("click", function() {
     flipCard.classList.toggle("active");
 });
 
-
 let currentIndex = 0;
 
 function prepareCard(word) {
