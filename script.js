@@ -8,7 +8,7 @@ const cardFront = document.querySelector('#card-front');
 const frontTitle = cardFront.querySelector('h1');
 const cardBack = document.querySelector('#card-back');
 const backTitle = cardBack.querySelector('h1');
-const example = cardFront.querySelector('span'); 
+const example = cardBack.querySelector('span');
 const back = document.querySelector('#back');
 const testing = document.querySelector('#exam');
 const next = document.querySelector('#next');
@@ -149,3 +149,4 @@ function checkTranslationsHandler(currentCard) {
         selectedCard = null;
     }
 }
+
