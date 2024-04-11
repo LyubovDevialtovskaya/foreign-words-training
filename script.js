@@ -1,156 +1,185 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const cards = [
-        { word: "apple", translation: "яблоко", example: "I ate an apple." },
-        { word: "day", translation: "день", example: "Such a crazy day." },
-        { word: "banana", translation: "банан", example: "She likes bananas." },
-        { word: "journey", translation: "путешествие", example: "I like journeys" },
-        { word: "juice", translation: "сок", example: "She likes orange juice" },
-    ];
+const currentWord = document.querySelector('#current-word');
+const totalWord = document.querySelector('#total-word');
+const wordsProgress = document.querySelector('#words-progress');
+const shuffleWords = document.querySelector('#shuffle-words');
+const examProgress = document.querySelector('#exam-progress');
+const slider = document.querySelector('.slider');
+const flipCard = document.querySelector('.flip-card');
+const cardFront = document.querySelector('#card-front');
+const frontTitle = cardFront.querySelector('h1');
+const cardBack = document.querySelector('#card-back');
+const backTitle = cardBack.querySelector('h1');
+const example = cardBack.querySelector('span');
+const back = document.querySelector('#back');
+const testing = document.querySelector('#exam');
+const next = document.querySelector('#next');
+const studying = document.querySelector('.study-cards');
+const examination = document.querySelector('#exam-cards');
 
-    const flipCards = document.querySelectorAll(".flip-card");
-    const studyMode = document.getElementById("study-mode");
-    const examMode = document.getElementById("exam-mode");
-    const currentWordDisplay = document.getElementById("current-word");
-    const totalWordDisplay = document.getElementById("total-word");
-    const wordsProgress = document.getElementById("words-progress");
-    const shuffleButton = document.getElementById("shuffle-words");
-    const backButton = document.getElementById("back");
-    const nextButton = document.getElementById("next");
-    const examButton = document.getElementById("exam");
-    const timerDisplay = document.getElementById("timer");
-    const correctPercentDisplay = document.getElementById("correct-percent");
-    const examProgress = document.getElementById("exam-progress");
-    const resultsModal = document.querySelector(".results-modal");
-    const wordStatsTemplate = document.getElementById("word-stats");
+function randomInteger(max) {
+    return Math.floor(Math.random() * (max + 1));
+}
 
-    let currentWordIndex = 0;
-    let correctAnswers = 0;
-    let incorrectAnswers = 0;
-    let startTime;
-    let timerInterval;
-
-    function updateStudyModeUI() {
-        const currentWord = cards[currentWordIndex];
-        document.querySelector("#card-front h1").textContent = currentWord.word;
-        document.querySelector("#card-back h1").textContent = currentWord.translation;
-        document.querySelector("#card-back span").textContent = currentWord.example;
-        currentWordDisplay.textContent = currentWordIndex + 1;
-        totalWordDisplay.textContent = cards.length;
-        wordsProgress.value = ((currentWordIndex + 1) / cards.length) * 100;
+class Word {
+    constructor(title, translation, example) {
+        this.title = title;
+        this.translation = translation;
+        this.example = example;
     }
+}
 
-    function updateExamModeUI() {
-        examProgress.value = ((correctAnswers + incorrectAnswers) / cards.length) * 100;
-        correctPercentDisplay.textContent = Math.round((correctAnswers / cards.length) * 100) + "%";
-    }
+const word1 = new Word("juice", "сок", "I like orange juice.");
+const word2 = new Word("sun", "солнце", "The sun gives you a good mood when it shines.");
+const word3 = new Word("life", "жизнь", "Life is beautiful, the main thing is to notice it");
+const word4 = new Word("dress", "платье", "A dress is the best decoration for a girl.");
+const word5 = new Word("journey", "путешествие", "Journey of a lifetime!");
 
-    function flipCard() {
-        this.classList.toggle("active");
-    }
+const arr = [word1, word2, word3, word4, word5];
 
-    function showNextCard() {
-        if (currentWordIndex < cards.length - 1) {
-            currentWordIndex++;
-            updateStudyModeUI();
-            backButton.disabled = false;
-        }
-        if (currentWordIndex === cards.length - 1) {
-            nextButton.disabled = true;
-        }
-    }
-
-    function showPreviousCard() {
-        if (currentWordIndex > 0) {
-            currentWordIndex--;
-            updateStudyModeUI();
-            nextButton.disabled = false;
-        }
-        if (currentWordIndex === 0) {
-            backButton.disabled = true;
-        }
-    }
-
-    function shuffleCards() {
-        cards.sort(() => Math.random() - 0.5);
-        currentWordIndex = 0;
-        updateStudyModeUI();
-    }
-
-    function startExam() {
-        studyMode.classList.add("hidden");
-        examMode.classList.remove("hidden");
-        startTime = Date.now();
-        timerInterval = setInterval(updateTimer, 1000);
-        updateExamCards();
-    }
-
-    function updateTimer() {
-        const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-        const minutes = Math.floor(elapsedTime / 60);
-        const seconds = elapsedTime % 60;
-        timerDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    }
-
-    function updateExamCards() {
-        const examCardsContainer = document.getElementById("exam-cards");
-        examCardsContainer.innerHTML = "";
-        for (let i = 0; i < cards.length; i++) {
-            const card = document.createElement("div");
-            card.classList.add("card");
-            card.textContent = cards[i].translation;
-            card.addEventListener("click", selectCard);
-            examCardsContainer.appendChild(card);
-        }
-    }
-
-    function selectCard() {
-        if (!this.classList.contains("correct")) {
-            if (this.textContent === cards[currentWordIndex].word) {
-                this.classList.add("correct");
-                correctAnswers++;
-                if (correctAnswers + incorrectAnswers === cards.length) {
-                    clearInterval(timerInterval);
-                    resultsModal.classList.remove("hidden");
-                    updateExamModeUI();
-                }
-                setTimeout(() => {
-                    this.classList.add("fade-out");
-                    this.style.pointerEvents = "none";
-                }, 500);
-            } else {
-                this.classList.add("wrong");
-                incorrectAnswers++;
-                setTimeout(() => {
-                    this.classList.remove("wrong");
-                }, 500);
-            }
-        }
-        updateExamModeUI();
-    }
-
-    shuffleButton.addEventListener("click", shuffleCards);
-    flipCards.forEach((card) => card.addEventListener("click", flipCard));
-    backButton.addEventListener("click", showPreviousCard);
-    nextButton.addEventListener("click", showNextCard);
-    examButton.addEventListener("click", startExam);
-
-    function saveProgress() {
-        localStorage.setItem("currentWordIndex", currentWordIndex);
-        localStorage.setItem("correctAnswers", correctAnswers);
-        localStorage.setItem("incorrectAnswers", incorrectAnswers);
-    }
-
-    function loadProgress() {
-        currentWordIndex = parseInt(localStorage.getItem("currentWordIndex")) || 0;
-        correctAnswers = parseInt(localStorage.getItem("correctAnswers")) || 0;
-        incorrectAnswers = parseInt(localStorage.getItem("incorrectAnswers")) || 0;
-    }
-
-    if (localStorage.getItem("currentWordIndex") !== null) {
-        loadProgress();
-        updateStudyModeUI();
-        updateExamModeUI();
-    }
-
-    window.addEventListener("beforeunload", saveProgress);
+flipCard.addEventListener("click", function() {
+    flipCard.classList.toggle("active");
 });
+
+let currentIndex = 0;
+let startTime; // Добавляем переменную для отслеживания времени начала тестирования
+let endTime; // Добавляем переменную для отслеживания времени завершения тестирования
+
+function prepareCard(word) {
+    currentWord.textContent = currentIndex + 1;
+    if (flipCard.classList.contains("active")) {
+        frontTitle.textContent = word.translation;
+        backTitle.textContent = word.title;
+        example.textContent = word.example;
+    } else {
+        frontTitle.textContent = word.title;
+        backTitle.textContent = word.translation;
+        example.textContent = ""; 
+    }
+    wordsProgress.value = (currentIndex + 1) / arr.length * 100;
+
+    if (!flipCard.classList.contains("active")) {
+        flipCard.classList.add("active");
+    }
+}
+
+prepareCard(arr[currentIndex]);
+
+next.addEventListener("click", function() {
+    currentIndex++;
+    prepareCard(arr[currentIndex]);
+    back.disabled = false;
+    if (currentIndex === arr.length - 1) {
+        next.disabled = true;
+    }
+});
+
+back.addEventListener("click", function() {
+    currentIndex--;
+    prepareCard(arr[currentIndex]);
+    next.disabled = false;
+    if (currentIndex === 0) {
+        back.disabled = true;
+    }
+});
+
+shuffleWords.addEventListener('click', function() {
+    arr.sort(() => Math.random() - 0.5);
+    prepareCard(arr[currentIndex]);
+});
+totalWord.textContent = arr.length;
+
+let selectedCard;
+
+function createTestCard(text) {
+    const divElement = document.createElement('div');
+    divElement.classList.add('card');
+    const pElement = document.createElement('p');
+    pElement.textContent = text;
+    divElement.append(pElement);
+    divElement.onclick = () => checkTranslationsHandler(divElement);
+    return divElement;
+}
+
+flipCard.addEventListener("click", function() {
+    flipCard.classList.toggle("active");
+});
+
+function addCard() {
+    const fragment = new DocumentFragment();
+    const newArray = [];
+    arr.forEach((word) => {
+        newArray.push(createTestCard(word.translation));
+        newArray.push(createTestCard(word.title));
+    });
+    fragment.append(...newArray.sort(() => Math.random() - 0.5));
+    examination.innerHTML = "";
+    examination.append(fragment);
+}
+
+testing.addEventListener('click', function() {
+    studying.classList.add('hidden');
+    examination.classList.remove('hidden');
+    startTime = new Date(); // Сохраняем время начала тестирования
+    addCard();
+});
+
+function checkTranslationsHandler(currentCard) {
+    if (!selectedCard) {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.classList.remove('correct');
+            card.classList.remove('wrong');
+        });
+        currentCard.style.pointerEvents = "none";
+        currentCard.classList.add('correct');
+        selectedCard = currentCard;
+    } else {
+        const wordObject = arr.find(word => word.translation.trim() === selectedCard.textContent.trim() || word.title.trim() === selectedCard.textContent.trim());
+        if (wordObject.translation.trim() === currentCard.textContent.trim() || wordObject.title.trim() === currentCard.textContent.trim()) {
+            currentCard.style.pointerEvents = "none";
+            currentCard.classList.add('correct');
+            currentCard.classList.add('fade-out');
+            selectedCard.classList.add('fade-out');
+            const cards = document.querySelectorAll('.card');
+            let cardsFaded = true;
+            cards.forEach(card => {
+                if (!card.classList.contains('fade-out')) {
+                    cardsFaded = false;
+                }
+            });
+            if (cardsFaded) {
+                endTime = new Date(); // Сохраняем время завершения тестирования
+                const durationInSeconds = (endTime - startTime) / 1000; // Продолжительность тестирования в секундах
+                console.log(`Проверка знаний завершена успешно! Продолжительность тестирования: ${durationInSeconds} сек.`); // Выводим продолжительность тестирования в консоль
+                alert(`Проверка знаний завершена успешно! Продолжительность тестирования: ${durationInSeconds} сек.`); // Выводим продолжительность тестирования
+            }
+        } else {
+            selectedCard.classList.add('correct');
+            currentCard.classList.add('wrong');
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    card.classList.remove('correct');
+                    card.classList.remove('wrong');
+                });
+            }, 500);
+            currentCard.style.pointerEvents = "all";
+            selectedCard.style.pointerEvents = "all";
+        }
+        selectedCard = null;
+    }
+}
+
+function saveProgress() {
+    localStorage.setItem('currentIndex', currentIndex);
+}
+function loadProgress() {
+    const savedIndex = localStorage.getItem('currentIndex');
+    if (savedIndex !== null) {
+        currentIndex = parseInt(savedIndex);
+        prepareCard(arr[currentIndex]);
+    }
+}
+window.addEventListener('load', loadProgress);
+window.addEventListener('beforeunload', saveProgress);
+
