@@ -2,8 +2,8 @@ const flipCard = document.querySelector('.flip-card');
 const cardFront = document.querySelector('#card-front h1');
 const cardBack = document.querySelector('#card-back h1');
 
-const words = ["сок", "солнце", "жизнь", "платье", "путшествие"];
-const wordsTranslate = ['сок пример: I like orange juice.',
+const words = ["сок", "солнце", "жизнь", "платье", "путешествие"];
+const wordsTranslate = ['juice пример: I like orange juice.',
     'sun пример: The sun gives you a good mood when it shines.',
     'life пример: Life is beautiful, the main thing is to notice it!',
     'dress пример: A dress is the best decoration for a girl.',
@@ -14,24 +14,22 @@ let i = 0;
 const titleFront = cardFront.querySelector('h1');
 const titleBack = cardBack.querySelector('h1');
 
-
-
 flipCard.addEventListener("click", function(event) {
     flipCard.classList.toggle('active');
-})
+});
 
 cardFront.textContent = words[i];
 cardBack.textContent = wordsTranslate[i];
-const buttonNex = document.querySelector('#next');
+const buttonNext = document.querySelector('#next');
 const buttonBack = document.querySelector('#back');
 const currentWord = document.querySelector('#current-word');
 
-buttonNex.addEventListener("click", function(event) {
+buttonNext.addEventListener("click", function(event) {
     i++;
     if (i == words.length - 1) {
-        buttonNex.disabled = true;
+        buttonNext.disabled = true;
     } else {
-        buttonNex.disabled = false;
+        buttonNext.disabled = false;
     }
 
     if (i === 0) {
@@ -55,13 +53,12 @@ buttonBack.addEventListener("click", function(event) {
     }
 
     if (i >= words.length - 1) {
-        buttonNex.disabled = true;
+        buttonNext.disabled = true;
     } else {
-        buttonNex.disabled = false;
+        buttonNext.disabled = false;
     }
     cardFront.textContent = words[i];
     cardBack.textContent = wordsTranslate[i];
-
 
     currentWord.textContent = i + 1;
 });
@@ -103,7 +100,9 @@ containerCards.classList.add('container-cards');
 containerCards.classList.add('hidden');
 examCardsContainer.append(containerCards);
 const examCardsContainer = document.querySelector('#exam-cards');
+
 let cardTemplate = document.querySelector('#card-template');
+
 function prepareItemCards(itemCards) {
     const { rus, eng } = itemCards;
     const item = cardTemplate.content.cloneNode(true);
@@ -113,30 +112,57 @@ function prepareItemCards(itemCards) {
 };
 
 let copy = [...cards];
+
 function paintCards(side) {
     side.forEach((item) => {
         containerCards.append(prepareItemCards(item));
     });
 }
 
-prepareItemCards(copy);
+paintCards(copy);
+
+const shuffledCards = [...cards];
+shuffleArray(shuffledCards);
+
+function paintShuffledCards(cards) {
+    cards.forEach((item) => {
+        containerCards.append(prepareItemCards(item));
+    });
+}
+
+paintShuffledCards(shuffledCards);
+
+let firstClick = null;
 
 containerCards.addEventListener("click", function(event) {
-    let firstClick = null;
-    firstClick.classList.add('correct');
-    let secondClick = event.target;
-
-    if (firstClick === secondClick) {
-        firstCard.classList.add('fade-out');
-        secondClick.classList.add('fade-out');
+    const clickedCard = event.target.closest('.flip-card');
+    if (!firstClick) {
+        firstClick = clickedCard;
+        firstClick.classList.add('correct');
     } else {
-        secondClick.classList.add('wrong');
+        const secondClick = clickedCard;
+        secondClick.classList.add('correct');
+
+        const firstCardText = firstClick.querySelector('.eng').textContent;
+        const secondCardText = secondClick.querySelector('.eng').textContent;
+
+        if (firstCardText === secondCardText) {
+            firstClick.classList.add('fade-out');
+            secondClick.classList.add('fade-out');
+        } else {
+            secondClick.classList.add('wrong');
+            setTimeout(() => {
+                secondClick.classList.remove('wrong');
+            }, 500);
+        }
+
+        firstClick = null;
     }
 });
-setTimeout(() => {
-    firstCard.classList.remove('fade-out');
-    secondClick.classList.remove('wrong');
 
-}, 500);
-
-  
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
