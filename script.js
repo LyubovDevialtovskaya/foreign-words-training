@@ -47,7 +47,7 @@ function prepareCard(word) {
     currentWord.textContent = currentIndex + 1;
     frontTitle.textContent = word.title;
     backTitle.textContent = word.translation;
-    example.textContent = word.example;
+    example.textContent = `Пример: ${word.example}`; 
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 
     if (!flipCard.classList.contains("active")) {
