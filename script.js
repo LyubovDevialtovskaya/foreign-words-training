@@ -48,6 +48,7 @@ function prepareCard(word) {
     frontTitle.textContent = word.title;
     backTitle.textContent = word.translation;
     example.textContent = word.example; 
+    cardBack.querySelector('span').textContent = word.example; 
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 }
 
