@@ -1,4 +1,23 @@
-const testCards = document.querySelector('.test-cards');
+const studyCards = document.querySelector('.study-cards');
+const flipCard = document.querySelector('.flip-card');
+const cardFront = document.querySelector('#card-front');
+const cardBack = document.querySelector('#card-back');
+const cardFrontContent = document.querySelector('#card-front h1');
+const cardBackTranslate = document.querySelector('#card-back h1');
+const cardBackExample = document.querySelector('#card-back span');
+const nextButton = document.querySelector('#next');
+const backButton = document.querySelector('#back');
+const number = document.querySelector('#current-word');
+const examButton = document.querySelector('#exam');
+const allExamCards = document.querySelector('#exam-cards');
+const shuffleButton = document.querySelector('#shuffle-words');
+const timer = document.querySelector('#timer');
+const wordsProgress = document.querySelector('#words-progress');
+const correctPercent = document.querySelector('#correct-percent');
+const examProgress = document.querySelector('#exam-progress');
+const resultsModal = document.querySelector('#results-modal');
+const wordStatsTemplate = document.querySelector('template#word-stats');
+
 const cards = [
     { engWord: 'juice', translateWord: 'сок', example: 'I like orange juice.' },
     { engWord: 'sun', translateWord: 'солнце', example: 'The sun gives you a good mood when it shines.' },
@@ -9,6 +28,57 @@ const cards = [
 
 let firstCard = null;
 let secondCard = null;
+let startTime = null;
+let endTime = null;
+let correctCount = 0;
+let incorrectCount = 0;
+let currentIndex = 0;
+
+function setCard(card) {
+    cardFrontContent.textContent = card.engWord;
+    cardBackTranslate.textContent = card.translateWord;
+    cardBackExample.textContent = card.example;
+}
+
+function updateProgress() {
+    const percent = ((currentIndex + 1) / cards.length) * 100;
+    wordsProgress.textContent = `${Math.round(percent)}%`;
+}
+
+function startTimer() {
+    startTime = new Date().getTime();
+}
+
+function stopTimer() {
+    endTime = new Date().getTime();
+    const timeDiff = endTime - startTime;
+    const seconds = Math.floor(timeDiff / 1000);
+    timer.textContent = `${seconds} сек`;
+}
+
+function updateExamProgress() {
+    const totalCards = correctCount + incorrectCount;
+    const percentCorrect = (correctCount / totalCards) * 100;
+    correctPercent.textContent = `${Math.round(percentCorrect)}%`;
+    examProgress.textContent = `${totalCards} / ${cards.length}`;
+}
+
+function showResults() {
+    const fragment = document.importNode(wordStatsTemplate.content, true);
+    const resultsContainer = fragment.querySelector('.results-container');
+    cards.forEach(card => {
+        const resultItem = document.createElement('div');
+        resultItem.classList.add('result-item');
+        resultItem.innerHTML = `
+            <p>${card.engWord}</p>
+            <p>${card.translateWord}</p>
+            <p>${card.example}</p>
+        `;
+        resultsContainer.appendChild(resultItem);
+    });
+    resultsModal.appendChild(fragment);
+    resultsModal.style.display = 'block';
+}
 
 function createTestCards() {
     const shuffledCards = shuffleArray(cards.concat(cards));
@@ -66,7 +136,8 @@ function handleCardClick(cardElement, card) {
 function checkAllCardsMatched() {
     const remainingCards = document.querySelectorAll('.test-card');
     if (remainingCards.length === 0) {
-        alert('Поздравляем! Вы успешно завершили проверку знаний.');
+        stopTimer();
+        showResults();
     }
 }
 
@@ -78,4 +149,32 @@ function shuffleArray(array) {
     return array;
 }
 
+function shuffleCards() {
+    currentIndex = 0;
+    cards = shuffleArray(cards);
+    setCard(cards[currentIndex]);
+    updateProgress();
+}
+
+function goBack() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        setCard(cards[currentIndex]);
+        updateProgress();
+    }
+}
+
+function goForward() {
+    if (currentIndex < cards.length - 1) {
+        currentIndex++;
+        setCard(cards[currentIndex]);
+        updateProgress();
+    }
+}
+
+nextButton.addEventListener("click", goForward);
+backButton.addEventListener("click", goBack);
+shuffleButton.addEventListener("click", shuffleCards);
+
 createTestCards();
+startTimer();
