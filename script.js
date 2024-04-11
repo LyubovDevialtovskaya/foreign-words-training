@@ -94,7 +94,7 @@ function createTestCards() {
         translation.classList.add('translation');
         testCard.appendChild(translation);
         testCard.addEventListener('click', () => handleCardClick(testCard, card));
-        testCards.appendChild(testCard);
+        testCard.appendChild(testCard);
     });
 }
 
