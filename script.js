@@ -100,10 +100,6 @@ function createTestCard(text) {
     return divElement;
 }
 
-flipCard.addEventListener("click", function() {
-    flipCard.classList.toggle("active");
-});
-
 function addCard() {
     const fragment = new DocumentFragment();
     const newArray = [];
@@ -175,13 +171,3 @@ function checkTranslationsHandler(currentCard) {
 
 function saveProgress() {
     localStorage.setItem('currentIndex', currentIndex);
-}
-function loadProgress() {
-    const savedIndex = localStorage.getItem('currentIndex');
-    if (savedIndex !== null) {
-        currentIndex = parseInt(savedIndex);
-        prepareCard(arr[currentIndex]);
-    }
-}
-window.addEventListener('load', loadProgress);
-window.addEventListener('beforeunload', saveProgress);
