@@ -111,15 +111,13 @@ function prepareItemCards(itemCards) {
     return item;
 };
 
-let copy = [...cards];
-
 function paintCards(side) {
     side.forEach((item) => {
         containerCards.append(prepareItemCards(item));
     });
 }
 
-paintCards(copy);
+paintCards(cards);
 
 const shuffledCards = [...cards];
 shuffleArray(shuffledCards);
@@ -130,7 +128,19 @@ function paintShuffledCards(cards) {
     });
 }
 
-paintShuffledCards(shuffledCards);
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+const shuffleButton = document.querySelector('#shuffle');
+shuffleButton.addEventListener('click', function() {
+    containerCards.innerHTML = '';
+    shuffleArray(shuffledCards);
+    paintShuffledCards(shuffledCards);
+});
 
 let firstClick = null;
 
@@ -159,10 +169,3 @@ containerCards.addEventListener("click", function(event) {
         firstClick = null;
     }
 });
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
