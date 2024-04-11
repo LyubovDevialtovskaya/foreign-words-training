@@ -46,13 +46,13 @@ let currentIndex = 0;
 function prepareCard(word) {
     currentWord.textContent = currentIndex + 1;
     if (flipCard.classList.contains('active')) {
-       
+  
         frontTitle.textContent = word.title;
         backTitle.textContent = word.translation;
         example.textContent = word.example; 
         cardBack.querySelector('span').textContent = ''; 
     } else {
-        
+    
         frontTitle.textContent = word.translation;
         backTitle.textContent = word.title;
         example.textContent = ''; 
@@ -80,6 +80,13 @@ back.addEventListener("click", function() {
     if (currentIndex === 0) {
         back.disabled = true;
     }
+});
+
+slider.addEventListener("click", function() {
+    flipCard.classList.toggle("active");
+    cardFront.classList.toggle("active"); 
+    cardBack.classList.toggle("active"); 
+    
 });
 
 shuffleWords.addEventListener('click', function() {
