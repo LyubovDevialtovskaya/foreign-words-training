@@ -47,11 +47,11 @@ function prepareCard(word) {
     if (flipCard.classList.contains("active")) {
         frontTitle.textContent = word.translation;
         backTitle.textContent = word.title;
-        example.textContent = ""; // Очищаем пример, так как он будет показан на передней стороне
+        example.textContent = word.example;
     } else {
         frontTitle.textContent = word.title;
         backTitle.textContent = word.translation;
-        example.textContent = word.example;
+        example.textContent = ""; // Очищаем пример, так как он будет показан на передней стороне
     }
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 
@@ -59,6 +59,7 @@ function prepareCard(word) {
         flipCard.classList.add("active");
     }
 }
+
 prepareCard(arr[currentIndex]);
 
 next.addEventListener("click", function() {
