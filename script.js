@@ -98,6 +98,10 @@ function createTestCard(text) {
     return divElement;
 }
 
+flipCard.addEventListener("click", function() {
+    flipCard.classList.toggle("active");
+});
+
 function addCard() {
     const fragment = new DocumentFragment();
     const newArray = [];
