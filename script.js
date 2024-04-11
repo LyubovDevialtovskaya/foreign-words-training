@@ -167,3 +167,39 @@ function checkTranslationsHandler(currentCard) {
         selectedCard = null;
     }
 }
+const timerElement = document.querySelector('#timer');
+let startTime;
+let timerInterval;
+
+function startTimer() {
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimer, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+}
+
+function updateTimer() {
+    const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+    const minutes = Math.floor(elapsedTime / 60);
+    const seconds = elapsedTime % 60;
+    const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    timerElement.textContent = formattedTime;
+}
+
+testing.addEventListener('click', function() {
+    studying.classList.add('hidden');
+    addCard();
+    startTimer();
+});
+
+function checkTranslationsHandler(currentCard) {
+
+    if (cardsFaded) {
+        stopTimer();
+        setTimeout(() => {
+            alert('Проверка знаний завершена успешно!');
+        }, 1000);
+    }
+}
