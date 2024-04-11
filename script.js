@@ -34,43 +34,47 @@ const word3 = new word("life", "жизнь", "Life is beautiful, the main thing 
 const word4 = new word("dress", "платье", "A dress is the best decoration for a girl.");
 const word5 = new word("journey", "путешествие", "Journey of a lifetime!");
 
+
 const arr = [word1, word2, word3, word4, word5];
 
-flipCard.addEventListener("click", function() {
-    flipCard.classList.toggle("active");
-});
+
+flipCard.classList.add('active');
+
+slider.addEventListener("click", function() {
+    if (flipCard.classList.contains("active")) {
+        flipCard.classList.remove("active");
+    }else {
+        flipCard.classList.contains("active");
+    }
+} );
 
 let currentIndex = 0;
 
-function prepareCard({title, translation, example}) {
+function prepareCard({title, translation, example} ) {
     currentWord.textContent = currentIndex + 1;
-    frontTitle.textContent = title;
-    backTitle.textContent = translation;
-    example.textContent = example;
+    frontTitle.textContent = title
+    backTitle.textContent = translation
+    example.textContent = example
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
-
-    if (!flipCard.classList.contains("active")) {
-        flipCard.classList.add("active");
-    }
-}
+};
 prepareCard(arr[currentIndex]);
 
 next.addEventListener("click", function() {
     currentIndex++;
     prepareCard(arr[currentIndex]);
-    back.disabled = false;
-    if (currentIndex === arr.length - 1) {
-        next.disabled = true;
-    }
+    back.removeAttribute('disabled');
+   if (currentIndex == arr.lang - 1) {
+    next.disabled = true;
+   }
 });
 
 back.addEventListener("click", function() {
     currentIndex--;
     prepareCard(arr[currentIndex]);
-    next.disabled = false;
-    if (currentIndex === 0) {
-        back.disabled = true;
-    }
+    next.removeAttribute('disabled');
+   if (currentIndex == 0) {
+    back.disabled = false;
+   }
 });
 
 shuffleWords.addEventListener('click', function() {
@@ -89,7 +93,7 @@ function createTestCard(object) {
     divElement.append(pElement);
     divElement.onclick = () => checkTranslationsHandler(divElement);
     return divElement;
-}
+};
 
 function addCard() {
     const fragment = new DocumentFragment();
@@ -101,10 +105,9 @@ function addCard() {
     fragment.append(...newArray.sort(() => Math.random() - 0.5));
     examination.innerHTML = "";
     examination.append(fragment);
-}
+};
 testing.addEventListener('click', function() {
     studying.classList.add('hidden');
-    examination.classList.remove('hidden');
     addCard();
 });
 
@@ -119,7 +122,7 @@ function checkTranslationsHandler(currentCard) {
         currentCard.classList.add('correct');
         selectedCard = currentCard;
         
-    } else {
+    }else {
         const wordObject = arr.find(word => word.translation === selectedCard.textContent || word.title === selectedCard.textContent);
         if (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent) {
             currentCard.style.pointerEvents = "none";
@@ -150,7 +153,7 @@ function checkTranslationsHandler(currentCard) {
             }, 500);
             currentCard.style.pointerEvents = "all";
             selectedCard.style.pointerEvents = "all";
-        }
+        };
         selectedCard = null;
     }
 }
