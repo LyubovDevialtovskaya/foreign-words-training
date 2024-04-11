@@ -1,175 +1,142 @@
-"use strict";
+const flipCard = document.querySelector('.flip-card');
+const cardFront = document.querySelector('#card-front h1');
+const cardBack = document.querySelector('#card-back h1');
 
-const words = [
-    ['juice', 'сок', 'I like orange juice.'],
-    ['sun', 'солнце', 'The sun gives you a good mood when it shines.'],
-    ['life', 'жизнь', 'Life is beautiful, the main thing is to notice it!'],
-    ['dress', 'платье', 'A dress is the best decoration for a girl.'],
-    ['journey', 'путешествие', 'Journey of a lifetime!'],
-  
-  ];
+const words = ["сок", "солнце", "жизнь", "платье", "путшествие"];
+const wordsTranslate = ['сок пример: I like orange juice.',
+    'sun пример: The sun gives you a good mood when it shines.',
+    'life пример: Life is beautiful, the main thing is to notice it!',
+    'dress пример: A dress is the best decoration for a girl.',
+    'journey пример: Journey of a lifetime!'
+];
 
-  let counter = 0;
+let i = 0;
+const titleFront = cardFront.querySelector('h1');
+const titleBack = cardBack.querySelector('h1');
 
-  const studyCards = document.querySelector('.study-cards')
-  const flipCard = document.querySelector('.flip-card');
-  const slider = document.querySelector('.slider');
-  const button = document.querySelector('.slider-controls');
-  const buttonNext = document.querySelector('#next');
-  const buttonBack = document.querySelector('#back');
-  const buttonExam = document.querySelector('#exam');
-  const examsCard = document.querySelector('#exam-cards');
-  const examMode = document.querySelector('#exam-mode');
-  const studyMode = document.querySelector('#study-mode');
-  const shuffleButton = document.querySelector('#shuffle-words');
+
+
+flipCard.addEventListener("click", function(event) {
+    flipCard.classList.toggle('active');
+})
+
+cardFront.textContent = words[i];
+cardBack.textContent = wordsTranslate[i];
+const buttonNex = document.querySelector('#next');
+const buttonBack = document.querySelector('#back');
+const currentWord = document.querySelector('#current-word');
+
+buttonNex.addEventListener("click", function(event) {
+    i++;
+    if (i == words.length - 1) {
+        buttonNex.disabled = true;
+    } else {
+        buttonNex.disabled = false;
+    }
+
+    if (i === 0) {
+        buttonBack.disabled = true;
+    } else {
+        buttonBack.disabled = false;
+    }
+
+    cardFront.textContent = words[i];
+    cardBack.textContent = wordsTranslate[i];
+
+    currentWord.textContent = i + 1;
+});
+buttonBack.addEventListener("click", function(event) {
   
+    i--;
+    if (i === 0) {
+        buttonBack.disabled = true;
+    } else {
+        buttonBack.disabled = false;
+    }
+
+    if (i >= words.length - 1) {
+        buttonNex.disabled = true;
+    } else {
+        buttonNex.disabled = false;
+    }
+    cardFront.textContent = words[i];
+    cardBack.textContent = wordsTranslate[i];
+
+
+    currentWord.textContent = i + 1;
+});
+
+const examButton = document.querySelector('#exam');
+const firstPage = document.querySelector('.content');
+const studyMode = document.querySelector('#study-mode');
+examButton.addEventListener("click", function(event) {
+    firstPage.classList.add('hidden');
+    studyMode.classList.add('hidden');
+    containerCards.classList.remove('hidden');
+});
+
+const cards = [{
+        rus: "сок",
+        eng: "juice",
+
+    },
+    {
+        rus: "солнце",
+        eng: "sun",
+    },
+    {
+        rus: "жизнь",
+        eng: "life",
+    },
+    {
+        rus: "платье",
+        eng: "dress",
+    },
+    {
+        rus: "путешествие",
+        eng: "journey",
+    },
+];
+
+const containerCards = document.createElement('div');
+containerCards.classList.add('container-cards');
+containerCards.classList.add('hidden');
+examCardsContainer.append(containerCards);
+const examCardsContainer = document.querySelector('#exam-cards');
+let cardTemplate = document.querySelector('#card-template');
+function prepareItemCards(itemCards) {
+    const { rus, eng } = itemCards;
+    const item = cardTemplate.content.cloneNode(true);
+    item.querySelector(".rus").textContent = rus;
+    item.querySelector(".eng").textContent = eng;
+    return item;
+};
+
+let copy = [...cards];
+function paintCards(side) {
+    side.forEach((item) => {
+        containerCards.append(prepareItemCards(item));
+    });
+}
+
+prepareItemCards(copy);
+
+containerCards.addEventListener("click", function(event) {
+    let firstClick = null;
+    firstClick.classList.add('correct');
+    let secondClick = event.target;
+
+    if (firstClick === secondClick) {
+        firstCard.classList.add('fade-out');
+        secondClick.classList.add('fade-out');
+    } else {
+        secondClick.classList.add('wrong');
+    }
+});
+setTimeout(() => {
+    firstCard.classList.remove('fade-out');
+    secondClick.classList.remove('wrong');
+
+}, 500);
+
   
-  function createWord() { 
-  
-      const cardFront = document.querySelector('#card-front');
-      const wordFront = cardFront.querySelector('h1');
-      wordFront.textContent = words[counter][0];
-  
-      const cardBack = document.querySelector('#card-back');
-  
-      const wordTranslation = cardBack.querySelector('h1');
-      wordTranslation.textContent = words[counter][1];
-  
-      const example = cardBack.querySelector('span');
-      example.textContent = words[counter][2];
-  
-      const currentWord = document.querySelector('#current-word');
-      currentWord.textContent = counter + 1;
-  
-      const totalWord = document.querySelector('#total-word')
-      totalWord.textContent = words.length;
-  }
-  
-  function generateWord() { 
-      const randomIndex = Math.floor((Math.random() * words.length));
-      let newWord = words[randomIndex];
-      words[counter] = newWord;
-      createWord();
-  }
-  
-  shuffleButton.addEventListener('click', generateWord);
-  
-  
-  createWord();
-  
-  slider.addEventListener('click', () => { 
-      flipCard.classList.toggle('active');
-  });
-  
-  
-  button.addEventListener('click', (event) => { 
-      let action = event.target;
-      event.preventDefault();
-  
-      if (action === buttonNext) {
-          counter++;
-      } else if (action === buttonBack) {
-          counter--;
-      }
-  
-      if (action === buttonExam) { 
-          studyCards.classList.add('hidden'); 
-          studyMode.classList.add('hidden'); 
-          examMode.classList.remove('hidden'); 
-  
-          createCards();
-  
-          const cards = document.querySelectorAll('.card');
-          let hasSelectedCard = false;
-  
-          let firstCard, secondCard;
-  
-          function selectCard() {
-  
-              this.classList.add('correct');
-  
-              if (!hasSelectedCard) {
-                  hasSelectedCard = true;
-                  firstCard = this;
-                  return;
-              }
-  
-              secondCard = this;
-              hasSelectedCard = false;
-  
-              checkForMatch();
-  
-              if (Array.from(cards).every(card => card.className.includes('fade-out'))) {
-                  setTimeout(() => {
-                      alert("Игра окончена");
-                      location.reload();
-                  }, 1000);
-              }
-          }
-  
-          function checkForMatch() { 
-  
-              let numberFirst = words.indexOf(words.find(arr => arr.includes(firstCard.textContent)));
-              let numberSecond = words.indexOf(words.find(arr => arr.includes(secondCard.textContent)));
-  
-              if (numberFirst == numberSecond) {
-                  firstCard.classList.add('fade-out');
-                  secondCard.classList.add('fade-out');
-                  return;
-              }
-  
-              unSelectCard();
-          }
-  
-          function unSelectCard() { 
-  
-              secondCard.classList.add('wrong');
-              setTimeout(() => {
-                  firstCard.classList.remove('correct');
-                  secondCard.classList.remove('correct', 'wrong');
-  
-              }, 500);
-              return;
-          }
-  
-          cards.forEach(card => card.addEventListener('click', selectCard));
-      }
-  
-      if (counter > 0) {
-          buttonBack.disabled = false;
-      } else {
-          buttonBack.disabled = true;
-      }
-  
-      if (counter === words.length - 1) {
-          buttonNext.disabled = true;
-          return;
-      } else {
-          buttonNext.disabled = false;
-      }
-  
-      createWord();
-  });
-  
-  function createCard(item) { 
-      const divWord = document.createElement('div');
-      divWord.classList.add('card');
-      divWord.textContent = item;
-      return divWord;
-  
-  }
-  
-  function createCards() { 
-  
-      const fragment = new DocumentFragment();
-      const newArray = [];
-  
-      words.forEach((word) => {
-          newArray.push(createCard(word[0]));
-          newArray.push(createCard(word[1]));
-      });
-  
-      fragment.append(...newArray.sort(() => Math.random() - 0.5));
-      examsCard.innerHTML = "";
-      examsCard.append(fragment);
-  }
