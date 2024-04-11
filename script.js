@@ -6,62 +6,29 @@ const elements = {
   totalWordCounter: document.querySelector('#total-word'),
   shuffleBtn: document.querySelector('#shuffle-words'),
   studyProgress: document.querySelector('#words-progress'),
-  addNewWordBtn: document.querySelector('#add-words'),
-  removeWordBtn: document.querySelector('#remove-words'),
-  addWordPage: document.querySelector('.add-word-page'),
-  removeWordPage: document.querySelector('#remove-word-page'),
-  engInput: document.querySelector('#eng'),
-  rusInput: document.querySelector('#rus'),
-  exampleInput: document.querySelector('#example'),
-  studyCards: document.querySelector('.study-cards'),
-  cardFrontWord: document.querySelector('#card-front h1'),
-  cardBackWord: document.querySelector('#card-back h1'),
-  cardBackExample: document.querySelector('#card-back p span'),
   cardToStudy: document.querySelector('.flip-card'),
   backBtn: document.querySelector('#back'),
   nextBtn: document.querySelector('#next'),
-  examBtn: document.querySelector('#exam'),
-  examModeSidebar: document.querySelector('#exam-mode'),
-  correctPercent: document.querySelector('#correct-percent'),
-  examProgress: document.querySelector('#exam-progress'),
-  timer: document.querySelector('#time'),
-  restartBtn: document.querySelector('#restart'),
-  goToLearnBtn: document.querySelector('#go-learn'),
-  examCards: document.querySelector('#exam-cards')
+  cardBackExampleEng: document.querySelector('#card-back .example-eng')
 };
 
-// Classes
 class Word {
-  constructor(engWord, rusWord, example) {
+  constructor(engWord, rusWord, example, exampleEng) {
     this.engWord = engWord;
     this.rusWord = rusWord;
     this.example = example;
-    this.attempts = 0;
+    this.exampleEng = exampleEng;
   }
 }
 
-// State variables
-let wordsToLearn = [];
 let studyWords = [];
-let examWords = [];
 let index = 0;
-let timerId = null;
-let isExamModeOn = false;
-let fadedCardCounter = 0;
-let seconds = 0;
-
-// Event listeners
 elements.cardToStudy.addEventListener('click', toggleCard);
 elements.nextBtn.addEventListener('click', moveCardsForward);
 elements.backBtn.addEventListener('click', moveCardsBack);
 elements.shuffleBtn.addEventListener('click', shuffleStudyWords);
-elements.addNewWordBtn.addEventListener('click', showAddWordForm);
-elements.removeWordBtn.addEventListener('click', showRemoveWordForm);
-elements.goToLearnBtn.addEventListener('click', restartLearnMode);
-elements.examBtn.addEventListener('click', switchExamMode);
-elements.restartBtn.addEventListener('click', restartExamMode);
 
-// Functions
+
 function initialize() {
   initializeWords();
   initializeIndex();
@@ -73,29 +40,23 @@ function initialize() {
 
 function initializeWords() {
   try {
-    wordsToLearn = JSON.parse(localStorage.getItem('wordsToLearn')) || [];
-    studyWords = JSON.parse(sessionStorage.getItem('studyWords')) || [];
-    examWords = JSON.parse(sessionStorage.getItem('examWords')) || [];
+    studyWords = JSON.parse(localStorage.getItem('studyWords')) || [];
   } catch (error) {
     console.error(error);
   }
 
-  if (!wordsToLearn.length) {
-    addDefaultWords();
-  }
-
   if (!studyWords.length) {
-    studyWords = [...wordsToLearn];
+    addDefaultWords();
   }
 }
 
 function addDefaultWords() {
-  addWordToLearn('juice', 'сок', 'I like orange juice.');
-  addWordToLearn('sun', 'солнце', 'The sun gives you a good mood when it shines.');
-  addWordToLearn('life', 'жизнь', 'Life is beautiful, the main thing is to notice it!');
-  addWordToLearn('dress', 'платье', 'A dress is the best decoration for a girl.');
-  addWordToLearn('journey', 'путешествие', 'Journey of a lifetime!');
-  localStorage.setItem('wordsToLearn', JSON.stringify(wordsToLearn));
+  addWordToStudy('juice', 'сок', 'I like orange juice.', 'Мне нравится апельсиновый сок.');
+  addWordToStudy('sun', 'солнце', 'The sun gives you a good mood when it shines.', 'Солнце поднимает тебе настроение, когда оно светит.');
+  addWordToStudy('life', 'жизнь', 'Life is beautiful, the main thing is to notice it!', 'Жизнь прекрасна, главное — заметить это!');
+  addWordToStudy('dress', 'платье', 'A dress is the best decoration for a girl.', 'Платье — лучшее украшение для девушки.');
+  addWordToStudy('journey', 'путешествие', 'Journey of a lifetime!', 'Путешествие жизни!');
+  localStorage.setItem('studyWords', JSON.stringify(studyWords));
 }
 
 function initializeIndex() {
@@ -106,16 +67,17 @@ function initializeIndex() {
   }
 }
 
-function addWordToLearn(eng, rus, ex) {
-  const word = new Word(eng, rus, ex);
-  wordsToLearn.push(word);
+function addWordToStudy(eng, rus, ex, exEng) {
+  const word = new Word(eng, rus, ex, exEng);
+  studyWords.push(word);
 }
 
 function printStudyCard() {
   const word = studyWords[index];
   elements.cardFrontWord.textContent = word.engWord;
   elements.cardBackWord.textContent = word.rusWord;
-  elements.cardBackExample.textContent = word.example;
+  elements.cardBackExample.textContent = "";
+  elements.cardBackExampleEng.textContent = word.exampleEng; 
 }
 
 function changeCounter() {
@@ -155,42 +117,8 @@ function moveCards(step) {
 
 function shuffleStudyWords() {
   shuffle(studyWords);
-  sessionStorage.setItem('studyWords', JSON.stringify(studyWords));
+  localStorage.setItem('studyWords', JSON.stringify(studyWords));
   printStudyCard();
-}
-
-function showAddWordForm() {
-  elements.studyCards.classList.add('hidden');
-  elements.removeWordPage.classList.add('hidden');
-  elements.shuffleBtn.disabled = true;
-  elements.addWordPage.classList.remove('hidden');
-}
-
-function showRemoveWordForm() {
-  elements.studyCards.classList.add('hidden');
-  elements.addWordPage.classList.add('hidden');
-  elements.shuffleBtn.disabled = true;
-  elements.removeWordPage.classList.remove('hidden');
-}
-
-function restartLearnMode() {
-  sessionStorage.removeItem('indexToPrint');
-  window.location.reload();
-}
-
-function switchExamMode() {
-  sessionStorage.setItem('indexToPrint', JSON.stringify(0));
-  window.location.href = './exam.html'; 
-}
-
-function restartExamMode() {
-  clearInterval(timerId);
-  sessionStorage.removeItem('time');
-  sessionStorage.removeItem('fadedCardCounter');
-  sessionStorage.removeItem('examModeMark');
-  sessionStorage.removeItem('indexToPrint');
-  sessionStorage.removeItem('examWords');
-  window.location.reload();
 }
 
 function shuffle(array) {
@@ -199,3 +127,5 @@ function shuffle(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
+initialize();
