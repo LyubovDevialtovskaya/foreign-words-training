@@ -149,8 +149,9 @@ function checkTranslationsHandler(currentCard) {
             });
             if (cardsFaded) {
                 endTime = new Date(); // Сохраняем время завершения тестирования
-                const duration = (endTime - startTime) / 1000; // Продолжительность тестирования в секундах
-                alert(`Проверка знаний завершена успешно! Продолжительность тестирования: ${duration} сек.`); // Выводим продолжительность тестирования
+                const durationInSeconds = (endTime - startTime) / 1000; // Продолжительность тестирования в секундах
+                console.log(`Проверка знаний завершена успешно! Продолжительность тестирования: ${durationInSeconds} сек.`); // Выводим продолжительность тестирования в консоль
+                alert(`Проверка знаний завершена успешно! Продолжительность тестирования: ${durationInSeconds} сек.`); // Выводим продолжительность тестирования
             }
         } else {
             selectedCard.classList.add('correct');
