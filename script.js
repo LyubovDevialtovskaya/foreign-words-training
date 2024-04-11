@@ -1,128 +1,331 @@
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
+const studyCards = document.querySelector('.study-cards');
 const flipCard = document.querySelector('.flip-card');
-const cardFront = document.querySelector('#card-front h1');
-const cardBack = document.querySelector('#card-back h1');
+const cardFront = document.querySelector('#card-front');
+const cardBack = document.querySelector('#card-back');
+const cardFrontContent = document.querySelector('#card-front h1');
+const cardBackTranslate = document.querySelector('#card-back h1');
+const cardBackExample = document.querySelector('#card-back span');
 const nextButton = document.querySelector('#next');
 const backButton = document.querySelector('#back');
-const currentWordDisplay = document.querySelector('#current-word');
+const number = document.querySelector('#current-word');
 const examButton = document.querySelector('#exam');
-const firstPage = document.querySelector('.content');
-const studyMode = document.querySelector('#study-mode');
-const containerCards = document.querySelector('#exam-cards');
+const allExamCards = document.querySelector('#exam-cards');
 
-
-const words = ["сок", "солнце", "жизнь", "платье", "путешествие"];
-const wordsTranslate = ['juice пример: I like orange juice.',
-    'sun пример: The sun gives you a good mood when it shines.',
-    'life пример: Life is beautiful, the main thing is to notice it!',
-    'dress пример: A dress is the best decoration for a girl.',
-    'journey пример: Journey of a lifetime!'
+const cards = [
+    { engWord: 'juice', translateWord: 'сок', example: 'I like orange juice.' },
+    { engWord: 'sun', translateWord: 'солнце', example: 'The sun gives you a good mood when it shines.' },
+    { engWord: 'life', translateWord: 'жизнь', example: 'Life is beautiful, the main thing is to notice it!' },
+    { engWord: 'dress', translateWord: 'платье', example: 'A dress is the best decoration for a girl.' },
+    { engWord: 'journey', translateWord: 'путешествие', example: 'Journey of a lifetime!' },
 ];
 
 
-let currentIndex = 0;
+function setCard(card) {
+    cardFrontContent.textContent = card.engWord;
+    cardBackTranslate.textContent = card.translateWord;
+    cardBackExample.textContent = card.example;
+    //console.log(cardFrontContent)
+    //console.log(card.engWord)
+}
 
-function showCard(index) {
-    if (index >= 0 && index < words.length) {
-        cardFront.textContent = words[index];
-        cardBack.textContent = wordsTranslate[index];
-        currentIndex = index;
-        updateNavigationButtons();
+setCard(cards[0]);
+
+studyCards.addEventListener("click", function(activate) {
+
+    const element = activate.target.closest(".flip-card");
+    
+    if (element) {
+        element.classList.toggle('active');
+    } 
+
+}); 
+
+
+let count = 0;
+function goBack() {
+
+    if (count === 0) {
+        backButton.disabled = true;
+    } else {
+        count -= 1;
+        number.textContent = count + 1;
+        nextButton.disabled = false;
     }
-}
 
-function showNextCard() {
-    if (currentIndex < words.length - 1) {
-        showCard(currentIndex + 1);
+    setCard(cards[count]);
+
+}; 
+
+function goForward() {
+
+    if (count === cards.length - 1) {
+        nextButton.disabled = true;
+    } else {
+        count += 1;
+        number.textContent = count + 1;
+        backButton.disabled = false;
     }
-}
+
+    setCard(cards[count]);
+};
+
+backButton.addEventListener("click", goBack); 
+nextButton.addEventListener("click", goForward);
 
 
-function showPreviousCard() {
-    if (currentIndex > 0) {
-        showCard(currentIndex - 1);
+//console.log(cards);
+/*
+function shuffle(item) {
+    let currentIndex = duplicatedCards.length, randomIndex;
+
+    while (currentIndex != 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        [duplicatedCards[currentIndex], duplicatedCards[randomIndex]] = [
+        duplicatedCards[randomIndex], duplicatedCards[currentIndex]];
     }
+    return duplicatedCards;   
 }
+*/
+
+examButton.addEventListener("click", function() {
+
+    studyCards.classList.add('hidden');
 
 
-function updateNavigationButtons() {
-    nextButton.disabled = currentIndex === words.length - 1;
-    backButton.disabled = currentIndex === 0;
-    currentWordDisplay.textContent = currentIndex + 1;
-}
+    function createCardsGrid() {
 
+        const engWordsArray = cards.map ((item) => item.engWord);
+        const translationsArray = cards.map ((item) => item.translateWord);
+        const copyCards = [ ... cards];
+        const duplicatedCards = copyCards.concat(copyCards);
+        
+       
 
-examButton.addEventListener("click", function(event) {
-    firstPage.classList.add('hidden');
-    studyMode.classList.add('hidden');
-    containerCards.classList.remove('hidden');
-    containerCards.innerHTML = ''; 
+        duplicatedCards.forEach(() => {
+            
+            //shuffleDuplicatedCards(duplicatedCards);
+            const examCard = document.createElement('div');
+            examCard.classList.add('card');
+            const words = document.createElement('p');
+            
 
-    const shuffledIndexes = shuffleArray(Array.from(Array(words.length).keys()));
+            allExamCards.append(examCard);
+            examCard.append(words);
+            return examCard;              
+            
+        })
 
-    shuffledIndexes.forEach(index => {
-        const card = document.createElement('div');
-        card.classList.add('flip-card');
-        card.innerHTML = `
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <h1>${words[index]}</h1>
-                </div>
-                <div class="flip-card-back">
-                    <h1>${wordsTranslate[index]}</h1>
-                </div>
-            </div>
-        `;
-        card.addEventListener('click', flipCard);
-        containerCards.appendChild(card);
-    });
+        
+
+        
+        
+        /*
+        const translation = document.createElement('p');
+        translation.textContent = card.translateWord;*/
+        
+        //console.log(examCard)
+         
+        
+        return allExamCards;
+    }
+    
+    
+  createCardsGrid();
 });
 
 
-function flipCard(event) {
-    const clickedCard = event.currentTarget;
-    clickedCard.classList.toggle('active');
+/*
+    function getRandomIndex() {
+        for ( let i = 0; i < cards.length ; i++ ) {
+            return Math.floor(Math.random() * cards.length)    
+        };
+    }
+    getRandomIndex()    
+    console.log([i])
+    */
+    //console.log(cards[i])
 
-    const allCards = document.querySelectorAll('.flip-card');
-    const selectedCards = Array.from(allCards).filter(card => card.classList.contains('active'));
+    /*
+    for (i = 0, i < cards.length; i++;) {
+        let randomIndex = Math.floor(Math.random() * cards.length)
+        let temp = cards.length[i];
+        cards.length[i] = cards.length[randomIndex];
+        cards.length[randomIndex] = temp;
 
-    if (selectedCards.length === 2) {
-        const firstCard = selectedCards[0];
-        const secondCard = selectedCards[1];
+    }
 
-        if (firstCard.querySelector('h1').textContent === secondCard.querySelector('h1').textContent) {
-            setTimeout(() => {
-                firstCard.classList.add('fade-out');
-                secondCard.classList.add('fade-out');
-            }, 500);
-        } else {
-            setTimeout(() => {
-                selectedCards.forEach(card => card.classList.remove('active'));
-                secondCard.classList.add('wrong');
-                setTimeout(() => {
-                    secondCard.classList.remove('wrong');
-                }, 500);
-            }, 1000);
+    cards.forEach((card) => {
+         console.log(card);
+    })
+
+    
+
+    /*
+    function createCardsGrid() {
+
+
+        cards.forEach((card) => {
+            
+            shuffleCards(cards);
+
+            const examCard = document.createElement('div');
+            examCard.classList.add('card');
+
+            const word = document.createElement('h1');
+            word.textContent = card.engWord;
+            word.classList.add('card');
+            examCard.append(word);
+            //console.log(word)
+            allExamCards.append(examCard);
+
+           
+
+            return examCard;  
+
+        })
+
+        const duplicatedCards = cards.slice(0);
+
+        duplicatedCards.forEach((duplicatedCard) => {
+
+            const translationCards = document.createElement('div');
+            translationCards.classList.add('card');
+    
+            const translation = document.createElement('h1');
+            translation.textContent = duplicatedCard.translateWord;
+            translation.classList.add('card');
+            translationCards.append(translation);
+            
+            allExamCards.append(translationCards);
+            //console.log(translation)
+
+            return translationCards;  
+
+        })
+       
+
+    }
+    
+    createCardsGrid();
+  
+});
+*/
+
+/*
+    function getRandomIndex() {
+        for ( let i = 0; i < cards.length ; i++ ) {
+            return Math.floor(Math.random() * cards.length)    
+        };
+    }
+    getRandomIndex()    
+    console.log([i])
+    */
+    //console.log(cards[i])
+
+    /*
+    for (i = 0, i < cards.length; i++;) {
+        let randomIndex = Math.floor(Math.random() * cards.length)
+        let temp = cards.length[i];
+        cards.length[i] = cards.length[randomIndex];
+        cards.length[randomIndex] = temp;
+
+    }
+
+    cards.forEach((card) => {
+         console.log(card);
+    })
+   */
+   
+    
+   
+
+
+    /*
+    //word.textContent = card.translateWord;
+
+    const examCards = item => {
+        const examCardsEngWord = document.createElement('h1');
+        examCardsEngWord.textContent = item.engWord;
+        const examCardsTranslate = document.createElement('h1');
+        examCardsTranslate.textContent = item.translateWord;
+    }
+
+    examCards(cards[0]);
+    examCards.append(item)
+    */
+
+    /*
+    cards.forEach((item) => {
+        item.classList.add('card');
+
+         const itemExamCards = item => {
+             itemExamCards.textContent = item.engWord;
         }
+        console.log(itemExamCards)
+        examCards.append(itemExamCards);
+  
+    })*/
+
+//Режим проверки знаний
+//Отображаются карточки слов и их переводов (определений) в случайном порядке «рубашками вверх»
+
+
+
+/*
+//I write down the words, translate, example - Записываю слова, перевод, примеры
+
+class examCard {
+
+    constructor(engWord, translateWord) {
+        this.engWord = engWord;
+        this.translateWord = translateWord;
+        this.example = example;
     }
+};
 
-    const remainingCards = document.querySelectorAll('.flip-card:not(.fade-out)');
-    if (remainingCards.length === 0) {
-        alert('Проверка знаний завершена успешно!');
-    }
-}
+const apple = new Word('apple', 'яблоко', 'Eating apples are grown in the south, as well as the vine.');
+const street = new Word('street', 'улица', 'October street is the central street of the city.');
+const popcorn = new Word('popcorn', 'попкорн', 'They do movie night with popcorn.');
+const cat = new Word('cat', 'кот', 'Your cat shows affection to you.');
+const home = new Word('home', 'дом', 'Every individual plans to have a home someday.');
+
+const arrayWords = [apple, street, popcorn, cat, home];
+//Parameter output - Вывод параметров
+console.log(this.Word.engWord)
+//console.log(apple.translateWord)
+//console.log(apple.example)
+
+*/
+
+/*
+        cards.forEach((card) => {
+
+            const duplicatedCards = cards.slice(0);
+            const translationCards = document.createElement('div');
+            translationCards.classList.add('card');
+
+            const translation = document.createElement('h1');
+            translation.textContent = card.translateWord;
+            translation.classList.add('card');
+            translationCards.append(translation);
+            
+            allExamCards.append(duplicatedCards);
+            console.log(duplicatedCards)
+
+            return duplicatedCards;  
+
+        })
+        */
+
+       
+        //const duplicatedCards = cards.slice(0);
+        //console.log(duplicatedCards)
 
 
-flipCard.addEventListener("click", function(event) {
-    flipCard.classList.toggle('active');
-});
-showCard(currentIndex);
-updateNavigationButtons();
+
+
+
+
+
