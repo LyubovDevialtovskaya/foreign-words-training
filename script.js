@@ -18,14 +18,6 @@ const examProgress = document.querySelector('#exam-progress');
 const resultsModal = document.querySelector('#results-modal');
 const wordStatsTemplate = document.querySelector('template#word-stats');
 
-const cards = [
-    { engWord: 'juice', translateWord: 'сок', example: 'I like orange juice.' },
-    { engWord: 'sun', translateWord: 'солнце', example: 'The sun gives you a good mood when it shines.' },
-    { engWord: 'life', translateWord: 'жизнь', example: 'Life is beautiful, the main thing is to notice it!' },
-    { engWord: 'dress', translateWord: 'платье', example: 'A dress is the best decoration for a girl.' },
-    { engWord: 'journey', translateWord: 'путешествие', example: 'Journey of a lifetime!' },
-];
-
 let firstCard = null;
 let secondCard = null;
 let startTime = null;
@@ -33,6 +25,14 @@ let endTime = null;
 let correctCount = 0;
 let incorrectCount = 0;
 let currentIndex = 0;
+
+const cards = [
+    { engWord: 'juice', translateWord: 'сок', example: 'I like orange juice.' },
+    { engWord: 'sun', translateWord: 'солнце', example: 'The sun gives you a good mood when it shines.' },
+    { engWord: 'life', translateWord: 'жизнь', example: 'Life is beautiful, the main thing is to notice it!' },
+    { engWord: 'dress', translateWord: 'платье', example: 'A dress is the best decoration for a girl.' },
+    { engWord: 'journey', translateWord: 'путешествие', example: 'Journey of a lifetime!' },
+];
 
 function setCard(card) {
     cardFrontContent.textContent = card.engWord;
