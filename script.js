@@ -47,7 +47,7 @@ function prepareCard(word) {
     currentWord.textContent = currentIndex + 1;
     frontTitle.textContent = word.title;
     backTitle.textContent = word.translation;
-    example.textContent = `Пример: ${word.example}`; 
+    example.textContent = word.example;
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 
     if (!flipCard.classList.contains("active")) {
@@ -85,15 +85,19 @@ let selectedCard;
 function createTestCard(word) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
+
     const pEngElement = document.createElement('p');
     pEngElement.textContent = word.title;
     divElement.appendChild(pEngElement);
-    const exampleElement = document.createElement('p');
-    exampleElement.textContent = `Пример: ${word.example}`;
-    divElement.appendChild(exampleElement);
+
     const pRusElement = document.createElement('p');
     pRusElement.textContent = word.translation;
     divElement.appendChild(pRusElement);
+
+    const pExampleElement = document.createElement('p');
+    pExampleElement.textContent = word.example; // Добавляем пример
+    divElement.appendChild(pExampleElement);
+
     divElement.onclick = () => checkTranslationsHandler(divElement);
     return divElement;
 }
