@@ -17,7 +17,15 @@ const correctPercent = document.querySelector('#correct-percent');
 const examProgress = document.querySelector('#exam-progress');
 const resultsModal = document.querySelector('#results-modal');
 const wordStatsTemplate = document.querySelector('template#word-stats');
+
+let firstCard = null;
+let secondCard = null;
+let startTime = null;
+let endTime = null;
+let correctCount = 0;
+let incorrectCount = 0;
 let currentIndex = 0;
+
 let cards = [
     { engWord: 'juice', translateWord: 'сок', example: 'I like orange juice.' },
     { engWord: 'sun', translateWord: 'солнце', example: 'The sun gives you a good mood when it shines.' },
@@ -35,7 +43,121 @@ function setCard(card) {
 function updateProgress() {
     const percent = ((currentIndex + 1) / cards.length) * 100;
     wordsProgress.textContent = `${Math.round(percent)}%`;
-    number.textContent = `${currentIndex + 1}`;
+}
+
+function startTimer() {
+    startTime = new Date().getTime();
+}
+
+function stopTimer() {
+    endTime = new Date().getTime();
+    const timeDiff = endTime - startTime;
+    const seconds = Math.floor(timeDiff / 1000);
+    timer.textContent = `${seconds} сек`;
+}
+
+function updateExamProgress() {
+    const totalCards = correctCount + incorrectCount;
+    const percentCorrect = (correctCount / totalCards) * 100;
+    correctPercent.textContent = `${Math.round(percentCorrect)}%`;
+    examProgress.textContent = `${totalCards} / ${cards.length}`;
+}
+
+function showResults() {
+    const fragment = document.importNode(wordStatsTemplate.content, true);
+    const resultsContainer = fragment.querySelector('.results-container');
+    cards.forEach(card => {
+        const resultItem = document.createElement('div');
+        resultItem.classList.add('result-item');
+        resultItem.innerHTML = `
+            <p>${card.engWord}</p>
+            <p>${card.translateWord}</p>
+            <p>${card.example}</p>
+        `;
+        resultsContainer.appendChild(resultItem);
+    });
+    resultsModal.appendChild(fragment);
+    resultsModal.style.display = 'block';
+
+    alert('Поздравляем! Вы успешно завершили проверку знаний.');
+}
+
+function createTestCards() {
+    allExamCards.innerHTML = ''; // Clear existing cards
+    const shuffledCards = shuffleArray(cards.concat(cards));
+    shuffledCards.forEach(card => {
+        const testCard = document.createElement('div');
+        testCard.classList.add('test-card');
+        const word = document.createElement('p');
+        word.textContent = card.engWord;
+        word.classList.add('word');
+        testCard.appendChild(word);
+        const translation = document.createElement('p');
+        translation.textContent = card.translateWord;
+        translation.classList.add('translation');
+        testCard.appendChild(translation);
+        testCard.addEventListener('click', () => handleCardClick(testCard, card));
+        allExamCards.appendChild(testCard);
+    });
+}
+
+function handleCardClick(cardElement, card) {
+    if (!firstCard) {
+        firstCard = card;
+        cardElement.classList.add('selected');
+        cardElement.classList.add('correct');
+    } else if (!secondCard) {
+        secondCard = card;
+        cardElement.classList.add('selected');
+        if (firstCard.translateWord === secondCard.translateWord) {
+            setTimeout(() => {
+                cardElement.classList.add('fade-out');
+                const matchedCards = document.querySelectorAll('.selected');
+                matchedCards.forEach(matchedCard => {
+                    matchedCard.classList.add('fade-out');
+                });
+                setTimeout(() => {
+                    checkAllCardsMatched();
+                }, 500);
+            }, 500);
+        } else {
+            cardElement.classList.add('wrong');
+            setTimeout(() => {
+                const selectedCards = document.querySelectorAll('.selected');
+                selectedCards.forEach(selectedCard => {
+                    selectedCard.classList.remove('selected');
+                    selectedCard.classList.remove('correct');
+                    selectedCard.classList.remove('wrong');
+                });
+                firstCard = null;
+                secondCard = null;
+            }, 500);
+        }
+    }
+}
+
+function checkAllCardsMatched() {
+    const remainingCards = document.querySelectorAll('.test-card');
+    if (remainingCards.length === 0) {
+        stopTimer();
+        showResults();
+    }
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function shuffleCards() {
+    currentIndex = 0;
+    cards = shuffleArray(cards);
+    createTestCards(); 
+    setCard(cards[currentIndex]);
+    updateProgress();
 }
 
 function goBack() {
@@ -54,32 +176,25 @@ function goForward() {
     }
 }
 
-function flipCards() {
-    flipCard.classList.toggle('active');
-}
-
-function switchToExamMode() {
-    // Скрываем элементы режима тренировки
-    studyCards.style.display = 'none';
-    flipCard.style.display = 'none';
-    nextButton.style.display = 'none';
-    backButton.style.display = 'none';
-    shuffleButton.style.display = 'none';
-
-    // Отображаем элементы режима проверки знаний
-    allExamCards.style.display = 'block';
-    timer.style.display = 'block';
-    correctPercent.style.display = 'block';
-    examProgress.style.display = 'block';
-
-    // Начинаем тестирование
-    startTimer();
-}
-
 nextButton.addEventListener("click", goForward);
 backButton.addEventListener("click", goBack);
-flipCard.addEventListener("click", flipCards);
-examButton.addEventListener("click", switchToExamMode);
+shuffleButton.addEventListener("click", shuffleCards);
 
-setCard(cards[currentIndex]);
-updateProgress();
+examButton.addEventListener('click', () => {
+   
+    createTestCards();
+    
+    firstCard = null;
+    secondCard = null;
+    startTime = new Date().getTime();
+    correctCount = 0;
+    incorrectCount = 0;
+    currentIndex = 0;
+    updateProgress();
+    updateExamProgress();
+    timer.textContent = '0 сек'; 
+    studyCards.style.display = 'none';
+});
+
+createTestCards();
+startTimer();
