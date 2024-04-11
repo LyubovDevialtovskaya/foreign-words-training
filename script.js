@@ -1,3 +1,6 @@
+
+
+User
 const currentWord = document.querySelector('#current-word');
 const totalWord = document.querySelector('#total-word');
 const wordsProgress = document.querySelector('#words-progress');
