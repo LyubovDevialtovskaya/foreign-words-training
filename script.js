@@ -20,18 +20,18 @@ function randomInteger(max) {
 }
 
 class Word {
-    constructor(title, translation, example) {
-        this.title = title;
+    constructor(translation, title, example) {
         this.translation = translation;
+        this.title = title;
         this.example = example;
     }
 }
 
-const word1 = new Word("juice", "сок", "I like orange juice.");
-const word2 = new Word("sun", "солнце", "The sun gives you a good mood when it shines.");
-const word3 = new Word("life", "жизнь", "Life is beautiful, the main thing is to notice it");
-const word4 = new Word("dress", "платье", "A dress is the best decoration for a girl.");
-const word5 = new Word("journey", "путешествие", "Journey of a lifetime!");
+const word1 = new Word("сок", "juice", "I like orange juice.");
+const word2 = new Word("солнце", "sun", "The sun gives you a good mood when it shines.");
+const word3 = new Word("жизнь", "life", "Life is beautiful, the main thing is to notice it");
+const word4 = new Word("платье", "dress", "A dress is the best decoration for a girl.");
+const word5 = new Word("путешествие", "journey", "Journey of a lifetime!");
 
 const arr = [word1, word2, word3, word4, word5];
 
@@ -45,8 +45,8 @@ let currentIndex = 0;
 
 function prepareCard(word) {
     currentWord.textContent = currentIndex + 1;
-    frontTitle.textContent = word.title; 
-    backTitle.textContent = word.translation; 
+    frontTitle.textContent = word.title;
+    backTitle.textContent = word.translation;
     example.textContent = word.example; 
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 }
