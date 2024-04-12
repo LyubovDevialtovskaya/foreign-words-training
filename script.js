@@ -1,81 +1,159 @@
-"use strict"
+const currentWord = document.querySelector('#current-word');
+const totalWord = document.querySelector('#total-word');
+const wordsProgress = document.querySelector('#words-progress');
+const shuffleWords = document.querySelector('#shuffle-words');
+const examProgress = document.querySelector('#exam-progress');
+const slider = document.querySelector('.slider');
+const flipCard = document.querySelector('.flip-card');
+const cardFront = document.querySelector('#card-front');
+const frontTitle = cardFront.querySelector('h1');
+const cardBack = document.querySelector('#card-back');
+const backTitle = cardBack.querySelector('h1');
+const example = cardBack.querySelector('span');
+const back = document.querySelector('#back');
+const testing = document.querySelector('#exam');
+const next = document.querySelector('#next');
+const studying = document.querySelector('.study-cards');
+const examination = document.querySelector('#exam-cards');
 
-const words = [
-    {
-        word: 'juice',
-        translation: 'сок',
-        example: "I like orange juice.",
-    },
-    {
-        word: 'sun',
-        translation: 'солнце',
-        example: "The sun gives you a good mood when it shines.",
-    },
-    {
-        word: 'life',
-        translation: 'жизнь',
-        example: "Life is beautiful, the main thing is to notice it"
-    },
-    {
-        word: 'dress',
-        translation: 'платье',
-        example: "A dress is the best decoration for a girl."
-    },
-    {
-        word: 'journey',
-        translation: 'путешествие',
-        example: "Journey of a lifetime!"
+function randomInteger(max) {
+    let rand = Math.random() * (max + 1);
+    return Math.floor(rand);
+};
+
+class word {
+    constructor(title, translation, example) {
+        this.title = title;
+        this.translation = translation;
+        this.example = example;
     }
-]
+}
+const word1 = new word("juice", "сок", "I like orange juice.");
+const word2 = new word("sun", "солнце", "The sun gives you a good mood when it shines.");
+const word3 = new word("life", "жизнь", "Life is beautiful, the main thing is to notice it");
+const word4 = new word("dress", "платье", "A dress is the best decoration for a girl.");
+const word5 = new word("journey", "путешествие", "Journey of a lifetime!");
 
-const card = document.querySelector(".flip-card");
-const prevButton = document.querySelector("#back");
-const nextButton = document.querySelector("#next");
-const testButton = document.querySelector("#exam");
-const wordNumberElement = document.querySelector("#current-word");
-let idx = 0;
+const arr = [word1, word2, word3, word4, word5];
 
-function prepareCard({ word, translation, example }) {
-    renderCard({ word, translation, example });
-    card.addEventListener("click", (event) => {
-        if (idx !== words.length - 1) {
-            event.currentTarget.classList.toggle("active");
-        }
+
+flipCard.classList.add('active');
+
+slider.addEventListener("click", function() {
+    if (flipCard.classList.contains("active")) {
+        flipCard.classList.remove("active");
+    }else {
+        flipCard.classList.contains("active");
+    }
+} );
+
+let currentIndex = 0;
+
+//готовим карточки со словами
+function prepareCard({title, translation, example} ) {
+    currentWord.textContent = currentIndex + 1;
+    frontTitle.textContent = title
+    backTitle.textContent = translation
+    example.textContent = example
+    wordsProgress.value = (currentIndex + 1) / arr.length * 100;
+};
+prepareCard(arr[currentIndex]);
+//переход к следующему слову при клике на стрелку вперед, стрелка блокируется если слова закончились
+next.addEventListener("click", function() {
+    currentIndex++;
+    prepareCard(arr[currentIndex]);
+    back.removeAttribute('disabled');
+   if (currentIndex == arr.lang - 1) {
+    next.disabled = true;
+   }
+});
+//переход к предыдущему слову по стрелке назад
+back.addEventListener("click", function() {
+    currentIndex--;
+    prepareCard(arr[currentIndex]);
+    next.removeAttribute('disabled');
+   if (currentIndex == 0) {
+    back.disabled = false;
+   }
+});
+//дабавдяем обработчик при клике на кнопку перемешать
+shuffleWords.addEventListener('click', function() {
+    arr.sort(() => Math.random() - 0.5);
+    prepareCard(arr[currentIndex]);
+});
+totalWord.textContent = arr.length;
+
+let selectedCard;
+//функция тестирования карточек
+function createTestCard(object) {
+    const divElement = document.createElement('div');
+    divElement.classList.add('card');
+    const pElement = document.createElement('p');
+    pElement.append(object);
+    divElement.append(pElement);
+    divElement.onclick = () => checkTranslationsHandler(divElement);
+    return divElement;
+};
+
+function addCard() {
+    const fragment = new DocumentFragment();
+    const newArray = [];
+    arr.forEach((array) => {
+        newArray.push(createTestCard(array.translation));
+        newArray.push(createTestCard(array.title));
     });
-}
-
-function renderCard({ word, translation, example }) {
-    card.querySelector("#card-front h1").textContent = word || "Default Word";
-    card.querySelector("#card-back h1").textContent = translation || "Default Translation";
-    card.querySelector("#card-back p span").textContent = example || "Default Example";
-
-}
-
-function updateButtons() {
-    prevButton.disabled = idx === 0;
-    nextButton.disabled = idx === words.length - 1;
-}
-function updateWordNumber() {
-    wordNumberElement.textContent = `${idx + 1} из ${words.length}`;
-}
-prevButton.addEventListener("click", () => {
-    idx = Math.max(0, idx - 1);
-    prepareCard(words[idx]);
-    updateButtons();
+    fragment.append(...newArray.sort(() => Math.random() - 0.5));
+    examination.innerHTML = "";
+    examination.append(fragment);
+};
+testing.addEventListener('click', function() {
+    studying.classList.add('hidden');
+    addCard();
 });
 
-nextButton.addEventListener("click", () => {
-    idx = Math.min(words.length - 1, idx + 1);
-    prepareCard(words[idx]);
-    updateButtons();
-});
-
-testButton.addEventListener("click", () => {
-    
-});
-
-
-prepareCard(words[idx]);
-
-updateButtons();
-updateWordNumber()
+function checkTranslationsHandler(currentCard) {
+    if (!selectedCard) {
+        const card = document.querySelectorAll('.card');
+        card.forEach(card => {
+            card.classList.remove('correct');
+            card.classList.remove('wrong');
+        });
+        currentCard.style.pointerEvents = "none";
+        currentCard.classList.add('correct');
+        selectedCard = currentCard;
+        
+    }else {
+        const wordObject = arr.find(word => word.translation === selectedCard.textContent || word.title === selectedCard.textContent);
+        if (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent) {
+            currentCard.style.pointerEvents = "none";
+            currentCard.classList.add('correct');
+            currentCard.classList.add('fade-out');
+            selectedCard.classList.add('fade-out');
+            const cards = document.querySelectorAll('.card');
+            let cardsFaded = true;
+            cards.forEach(card => {
+                if (!card.classList.contains('fade-out')) {
+                    cardsFaded = false;
+                }
+            });
+            if (cardsFaded) {
+                setTimeout(() => {
+                    alert('Проверка знаний завершена успешно!');
+                }, 1000);
+            }
+        } else {
+            selectedCard.classList.add('correct');
+            currentCard.classList.add('wrong');
+            setTimeout(() => {
+                const cards = document.querySelectorAll('card');
+                cards.forEach(card => {
+                    card.classList.remove('correct');
+                    card.classList.remove('wrong');
+                });
+            }, 500);
+            currentCard.style.pointerEvents = "all";
+            selectedCard.style.pointerEvents = "all";
+        };
+        selectedCard = null;
+    }
+}
