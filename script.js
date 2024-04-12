@@ -89,8 +89,6 @@ testing.addEventListener('click', function() {
     addTestCards();
 });
 
-let selectedCard = null;
-
 function createTestCard(wordObject) {
     const divElement = document.createElement('div');
     divElement.classList.add('card', 'back'); // Добавляем класс back для обратной стороны
@@ -100,47 +98,65 @@ function createTestCard(wordObject) {
     divElement.onclick = () => checkTranslationsHandler(divElement, wordObject);
     return divElement;
 }
-
 function addTestCards() {
     const fragment = new DocumentFragment();
-    const shuffledWords = arr.sort(() => Math.random() - 0.5);
-    shuffledWords.forEach(wordObject => {
-        fragment.appendChild(createTestCard(wordObject)); // Создаем карточки с обратной стороны
-        fragment.appendChild(createTestCard(wordObject));
-    });
-    examination.innerHTML = "";
-    examination.appendChild(fragment);
+    const shuffledWords = arr.slice().sort(() => Math.random() - 0.5);
+    for (let i = 0; i < 5; i++) {
+        const index = i; 
+        fragment.appendChild(createTestCard(shuffledWords[index])); 
+        fragment.appendChild(createTestCard(new Word(shuffledWords[index].translation, shuffledWords[index].title, shuffledWords[index].example))); // English translation
+    }
+    const examCards = document.querySelector('#exam-cards');
+    examCards.innerHTML = "";
+    examCards.appendChild(fragment);
 }
 
-const examButton = document.querySelector('#testing');
-examButton.addEventListener('click', function() {
-    studyCards.classList.add('hidden');
-    examCards.classList.remove('hidden');
-    addTestCards();
-});
 
-function checkTranslationsHandler(currentCard, wordObject) {
+
+let selectedCard = null; 
+
+function checkTranslationsHandler(currentCard) {
     if (!selectedCard) {
+        const card = document.querySelectorAll('.card');
+        card.forEach(card => {
+            card.classList.remove('correct');
+            card.classList.remove('wrong');
+        });
+        currentCard.style.pointerEvents = "none";
+        currentCard.classList.add('correct');
         selectedCard = currentCard;
-        selectedCard.classList.add('correct');
-    } else {
-        if (wordObject.translation === selectedCard.textContent || wordObject.title === selectedCard.textContent) {
-            currentCard.classList.add('correct', 'fade-out');
+        
+    }else {
+        const wordObject = arr.find(word => word.translation === selectedCard.textContent || word.title === selectedCard.textContent);
+        if (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent) {
+            currentCard.style.pointerEvents = "none";
+            currentCard.classList.add('correct');
+            currentCard.classList.add('fade-out');
             selectedCard.classList.add('fade-out');
-            selectedCard = null;
-            const remainingCards = document.querySelectorAll('.card:not(.fade-out)');
-            if (remainingCards.length === 0) {
+            const cards = document.querySelectorAll('.card');
+            let cardsFaded = true;
+            cards.forEach(card => {
+                if (!card.classList.contains('fade-out')) {
+                    cardsFaded = false;
+                }
+            });
+            if (cardsFaded) {
                 setTimeout(() => {
                     alert('Проверка знаний завершена успешно!');
                 }, 1000);
             }
-        } else {
-            currentCard.classList.add('wrong');
-            setTimeout(() => {
-                currentCard.classList.remove('wrong');
-                selectedCard.classList.remove('correct'); // Убираем класс .correct у первой карточки
-            }, 500);
-            selectedCard = null;
-        }
-    }
+        } else {selectedCard.classList.add('correct');
+        currentCard.classList.add('wrong');
+        setTimeout(() => {
+            const cards = document.querySelectorAll('card');
+            cards.forEach(card => {
+                card.classList.remove('correct');
+                card.classList.remove('wrong');
+            });
+        }, 500);
+        currentCard.style.pointerEvents = "all";
+        selectedCard.style.pointerEvents = "all";
+    };
+    selectedCard = null;
+}
 }
