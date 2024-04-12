@@ -96,34 +96,26 @@ function createTestCard(object) {
 
 function addCard() {
     const fragment = new DocumentFragment();
-    const newArray = [];
-    arr.forEach((array) => {
-        newArray.push(createTestCard(array.translation));
-        newArray.push(createTestCard(array.title));
+    arr.forEach((word) => {
+        fragment.appendChild(createTestCard(word.translation));
     });
-    fragment.append(...newArray.sort(() => Math.random() - 0.5));
     examination.innerHTML = "";
-    examination.append(fragment);
-};
-testing.addEventListener('click', function() {
-    studying.classList.add('hidden');
-    addCard();
-});
+    examination.appendChild(fragment);
+}
 
 function checkTranslationsHandler(currentCard) {
     if (!selectedCard) {
-        const card = document.querySelectorAll('.card');
-        card.forEach(card => {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
             card.classList.remove('correct');
             card.classList.remove('wrong');
         });
         currentCard.style.pointerEvents = "none";
         currentCard.classList.add('correct');
         selectedCard = currentCard;
-        
-    }else {
-        const wordObject = arr.find(word => word.translation === selectedCard.textContent || word.title === selectedCard.textContent);
-        if (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent) {
+    } else {
+        const wordObject = arr.find(word => word.translation === selectedCard.textContent);
+        if (wordObject && (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent)) {
             currentCard.style.pointerEvents = "none";
             currentCard.classList.add('correct');
             currentCard.classList.add('fade-out');
@@ -141,18 +133,15 @@ function checkTranslationsHandler(currentCard) {
                 }, 1000);
             }
         } else {
-            selectedCard.classList.add('correct');
+            selectedCard.classList.add('wrong');
             currentCard.classList.add('wrong');
             setTimeout(() => {
-                const cards = document.querySelectorAll('card');
-                cards.forEach(card => {
-                    card.classList.remove('correct');
-                    card.classList.remove('wrong');
-                });
+                selectedCard.classList.remove('wrong');
+                currentCard.classList.remove('wrong');
             }, 500);
             currentCard.style.pointerEvents = "all";
             selectedCard.style.pointerEvents = "all";
-        };
+        }
         selectedCard = null;
     }
 }
