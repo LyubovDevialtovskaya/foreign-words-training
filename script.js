@@ -84,15 +84,21 @@ totalWord.textContent = arr.length;
 
 let selectedCard;
 //функция тестирования карточек
-function createTestCard(object) {
+function createTestCard(word) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
-    const pElement = document.createElement('p');
-    pElement.append(object);
-    divElement.append(pElement);
+    const pTitle = document.createElement('p');
+    pTitle.textContent = word.title;
+    const pTranslation = document.createElement('p');
+    pTranslation.textContent = word.translation;
+    const pExample = document.createElement('p');
+    pExample.textContent = `Пример: ${word.example}`;
+    divElement.appendChild(pTitle);
+    divElement.appendChild(pTranslation);
+    divElement.appendChild(pExample);
     divElement.onclick = () => checkTranslationsHandler(divElement);
     return divElement;
-};
+}
 
 function addCard() {
     const fragment = new DocumentFragment();
