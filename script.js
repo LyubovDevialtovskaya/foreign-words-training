@@ -82,20 +82,9 @@ let selectedCard;
 function createTestCard(object) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
-    
-    // Создаем переднюю сторону карточки
-    const frontElement = document.createElement('div');
-    frontElement.classList.add('front');
-    frontElement.textContent = object.title;
-    
-    // Создаем заднюю сторону карточки
-    const backElement = document.createElement('div');
-    backElement.classList.add('back');
-    backElement.textContent = object.translation;
-    
-    divElement.appendChild(frontElement);
-    divElement.appendChild(backElement);
-    
+    const pElement = document.createElement('p');
+    pElement.textContent = object;
+    divElement.appendChild(pElement);
     divElement.onclick = () => checkTranslationsHandler(divElement);
     return divElement;
 }
