@@ -28,11 +28,11 @@ class word {
         this.example = example;
     }
 }
-const word1 = new word("juice", "сок", "I like orange juice.");
-const word2 = new word("sun", "солнце", "The sun gives you a good mood when it shines.");
-const word3 = new word("life", "жизнь", "Life is beautiful, the main thing is to notice it");
-const word4 = new word("dress", "платье", "A dress is the best decoration for a girl.");
-const word5 = new word("journey", "путешествие", "Journey of a lifetime!");
+const word1 = new word( "сок","juice", "I like orange juice.");
+const word2 = new word("солнце","sun", "The sun gives you a good mood when it shines.");
+const word3 = new word("жизнь", "life","Life is beautiful, the main thing is to notice it");
+const word4 = new word( "платье", "dress","A dress is the best decoration for a girl.");
+const word5 = new word("путешествие","journey", "Journey of a lifetime!");
 
 const arr = [word1, word2, word3, word4, word5];
 
