@@ -38,56 +38,61 @@ const arr = [word1, word2, word3, word4, word5];
 
 flipCard.classList.add('active');
 
-slider.addEventListener("click", function () {
-    flipCard.classList.toggle("active");
-});
+slider.addEventListener("click", function() {
+    if (flipCard.classList.contains("active")) {
+        flipCard.classList.remove("active");
+    }else {
+        flipCard.classList.contains("active");
+    }
+} );
 
 let currentIndex = 0;
-function prepareCard({ title, translation, example }) {
+
+//готовим карточки со словами
+function prepareCard({title, translation, example} ) {
     currentWord.textContent = currentIndex + 1;
-    frontTitle.textContent = title;
-    backTitle.textContent = translation;
-    example.innerText = example; 
+    frontTitle.textContent = title
+    backTitle.textContent = translation
+    example.textContent = example
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
-}
-
+};
 prepareCard(arr[currentIndex]);
-
-next.addEventListener("click", function () {
+//переход к следующему слову при клике на стрелку вперед, стрелка блокируется если слова закончились
+next.addEventListener("click", function() {
     currentIndex++;
     prepareCard(arr[currentIndex]);
-    back.disabled = false;
-    if (currentIndex === arr.length - 1) {
-        next.disabled = true;
-    }
+    back.removeAttribute('disabled');
+   if (currentIndex == arr.lang - 1) {
+    next.disabled = true;
+   }
 });
-
-back.addEventListener("click", function () {
+//переход к предыдущему слову по стрелке назад
+back.addEventListener("click", function() {
     currentIndex--;
     prepareCard(arr[currentIndex]);
-    next.disabled = false;
-    if (currentIndex === 0) {
-        back.disabled = true;
-    }
+    next.removeAttribute('disabled');
+   if (currentIndex == 0) {
+    back.disabled = false;
+   }
 });
-
-shuffleWords.addEventListener('click', function () {
+//дабавдяем обработчик при клике на кнопку перемешать
+shuffleWords.addEventListener('click', function() {
     arr.sort(() => Math.random() - 0.5);
     prepareCard(arr[currentIndex]);
 });
 totalWord.textContent = arr.length;
 
 let selectedCard;
-
+//функция тестирования карточек
 function createTestCard(object) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
     const pElement = document.createElement('p');
-    pElement.textContent = object;
-    divElement.appendChild(pElement);
+    pElement.append(object);
+    divElement.append(pElement);
     divElement.onclick = () => checkTranslationsHandler(divElement);
     return divElement;
-}
+};
 
 function addCard() {
     const fragment = new DocumentFragment();
@@ -99,26 +104,29 @@ function addCard() {
     fragment.append(...newArray.sort(() => Math.random() - 0.5));
     examination.innerHTML = "";
     examination.append(fragment);
-}
-testing.addEventListener('click', function () {
+};
+testing.addEventListener('click', function() {
     studying.classList.add('hidden');
     addCard();
 });
 
 function checkTranslationsHandler(currentCard) {
     if (!selectedCard) {
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.classList.remove('correct', 'wrong');
+        const card = document.querySelectorAll('.card');
+        card.forEach(card => {
+            card.classList.remove('correct');
+            card.classList.remove('wrong');
         });
         currentCard.style.pointerEvents = "none";
         currentCard.classList.add('correct');
         selectedCard = currentCard;
-    } else {
+        
+    }else {
         const wordObject = arr.find(word => word.translation === selectedCard.textContent || word.title === selectedCard.textContent);
         if (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent) {
             currentCard.style.pointerEvents = "none";
-            currentCard.classList.add('correct', 'fade-out');
+            currentCard.classList.add('correct');
+            currentCard.classList.add('fade-out');
             selectedCard.classList.add('fade-out');
             const cards = document.querySelectorAll('.card');
             let cardsFaded = true;
@@ -133,17 +141,18 @@ function checkTranslationsHandler(currentCard) {
                 }, 1000);
             }
         } else {
-            selectedCard.classList.add('wrong');
+            selectedCard.classList.add('correct');
             currentCard.classList.add('wrong');
             setTimeout(() => {
-                const cards = document.querySelectorAll('.card');
+                const cards = document.querySelectorAll('card');
                 cards.forEach(card => {
-                    card.classList.remove('correct', 'wrong');
+                    card.classList.remove('correct');
+                    card.classList.remove('wrong');
                 });
             }, 500);
             currentCard.style.pointerEvents = "all";
             selectedCard.style.pointerEvents = "all";
-        }
+        };
         selectedCard = null;
     }
 }
