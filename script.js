@@ -9,12 +9,13 @@ const cardFront = document.querySelector('#card-front');
 const frontTitle = cardFront.querySelector('h1');
 const cardBack = document.querySelector('#card-back');
 const backTitle = cardBack.querySelector('h1');
-const example = cardBack.querySelector('span');
 const back = document.querySelector('#back');
 const testing = document.querySelector('#exam');
 const next = document.querySelector('#next');
 const studying = document.querySelector('.study-cards');
 const examination = document.querySelector('#exam-cards');
+const example = cardBack.querySelector('#example');
+
 
 function randomInteger(max) {
     return Math.floor(Math.random() * (max + 1));
