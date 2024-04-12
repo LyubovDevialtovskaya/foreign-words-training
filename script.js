@@ -93,7 +93,8 @@ function addCard() {
     const fragment = new DocumentFragment();
     const newArray = [];
     arr.forEach((array) => {
-        newArray.push(createTestCard(array));
+        newArray.push(createTestCard(array.translation));
+        newArray.push(createTestCard(array.title));
     });
     fragment.append(...newArray.sort(() => Math.random() - 0.5));
     examination.innerHTML = "";
