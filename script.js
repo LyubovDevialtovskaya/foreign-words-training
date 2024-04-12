@@ -77,25 +77,36 @@ const currentWord = document.querySelector('#current-word');
             addCard();
         });
 
-        function createTestCard(translation) {
+        function createTestCard(title) {
             const divElement = document.createElement('div');
             divElement.classList.add('card');
             const pElement = document.createElement('p');
-            pElement.append(translation);
+            pElement.append(title);
             divElement.append(pElement);
             divElement.onclick = () => checkTranslationsHandler(divElement);
             return divElement;
         }
-
+        
         function addCard() {
+            resetCardsState();
             const fragment = new DocumentFragment();
             arr.forEach(word => {
                 fragment.appendChild(createTestCard(word.translation));
             });
             examCards.innerHTML = "";
             examCards.appendChild(fragment);
+            examCards.addEventListener('click', function(event) {
+                const clickedCard = event.target.closest('.card');
+                if (clickedCard) {
+                    checkTranslationsHandler(clickedCard);
+                }
+            });
         }
-
+        
+        testing.addEventListener('click', function() {
+            addCard();
+        });
+        
         let selectedCard;
 
         function checkTranslationsHandler(currentCard) {
@@ -122,4 +133,4 @@ const currentWord = document.querySelector('#current-word');
                     }, 500);
                 }
             }
-        }
+        } 
