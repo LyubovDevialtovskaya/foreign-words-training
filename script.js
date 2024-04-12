@@ -15,6 +15,7 @@ const next = document.querySelector('#next');
 const studying = document.querySelector('.study-cards');
 const examination = document.querySelector('#exam-cards');
 const example = cardBack.querySelector('#example');
+example.textContent = example.example;
 
 
 function randomInteger(max) {
