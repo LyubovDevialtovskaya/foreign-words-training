@@ -93,7 +93,7 @@ let selectedCard = null;
 
 function createTestCard(wordObject) {
     const divElement = document.createElement('div');
-    divElement.classList.add('card');
+    divElement.classList.add('card', 'back'); // Добавляем класс back для обратной стороны
     const pElement = document.createElement('p');
     pElement.append(wordObject.translation);
     divElement.append(pElement);
@@ -105,12 +105,19 @@ function addTestCards() {
     const fragment = new DocumentFragment();
     const shuffledWords = arr.sort(() => Math.random() - 0.5);
     shuffledWords.forEach(wordObject => {
-        fragment.appendChild(createTestCard(wordObject));
+        fragment.appendChild(createTestCard(wordObject)); // Создаем карточки с обратной стороны
         fragment.appendChild(createTestCard(wordObject));
     });
     examination.innerHTML = "";
     examination.appendChild(fragment);
 }
+
+const examButton = document.querySelector('#testing');
+examButton.addEventListener('click', function() {
+    studyCards.classList.add('hidden');
+    examCards.classList.remove('hidden');
+    addTestCards();
+});
 
 function checkTranslationsHandler(currentCard, wordObject) {
     if (!selectedCard) {
@@ -131,6 +138,7 @@ function checkTranslationsHandler(currentCard, wordObject) {
             currentCard.classList.add('wrong');
             setTimeout(() => {
                 currentCard.classList.remove('wrong');
+                selectedCard.classList.remove('correct'); // Убираем класс .correct у первой карточки
             }, 500);
             selectedCard = null;
         }
