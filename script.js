@@ -62,7 +62,7 @@ next.addEventListener("click", function() {
     currentIndex++;
     prepareCard(arr[currentIndex]);
     back.removeAttribute('disabled');
-   if (currentIndex == arr.lang - 1) {
+   if (currentIndex === arr.length - 1) {
     next.disabled = true;
    }
 });
@@ -71,8 +71,8 @@ back.addEventListener("click", function() {
     currentIndex--;
     prepareCard(arr[currentIndex]);
     next.removeAttribute('disabled');
-   if (currentIndex == 0) {
-    back.disabled = false;
+   if (currentIndex === 0) {
+    back.disabled = true;
    }
 });
 //дабавляем обработчик при клике на кнопку перемешать
@@ -119,8 +119,8 @@ function checkTranslationsHandler(currentCard) {
         currentCard.classList.add('правильно');
         selectedCard = currentCard;
     } else {
-        const wordObject = arr.find(слово => слово.перевод === selectedCard.textContent);
-        if (wordObject && (wordObject.перевод === currentCard.textContent || wordObject.слово === currentCard.textContent)) {
+        const wordObject = arr.find(word => word.translation === selectedCard.textContent);
+        if (wordObject && (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent)) {
             currentCard.style.pointerEvents = "none";
             currentCard.classList.add('правильно');
             currentCard.classList.add('исчезает');
