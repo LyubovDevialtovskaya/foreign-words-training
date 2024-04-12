@@ -62,7 +62,7 @@ next.addEventListener("click", function() {
     currentIndex++;
     prepareCard(arr[currentIndex]);
     back.removeAttribute('disabled');
-   if (currentIndex === arr.length - 1) {
+   if (currentIndex == arr.lang - 1) {
     next.disabled = true;
    }
 });
@@ -71,8 +71,8 @@ back.addEventListener("click", function() {
     currentIndex--;
     prepareCard(arr[currentIndex]);
     next.removeAttribute('disabled');
-   if (currentIndex === 0) {
-    back.disabled = true;
+   if (currentIndex == 0) {
+    back.disabled = false;
    }
 });
 //дабавляем обработчик при клике на кнопку перемешать
@@ -83,30 +83,25 @@ shuffleWords.addEventListener('click', function() {
 totalWord.textContent = arr.length;
 
 let selectedCard;
+//функция тестирования карточек
 function createTestCard(object) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
     const pElement = document.createElement('p');
-    pElement.textContent = object.translation;
-    divElement.appendChild(pElement);
-    divElement.onclick = () => checkTranslationsHandler(pElement);
+    pElement.append(object);
+    divElement.append(pElement);
+    divElement.onclick = () => checkTranslationsHandler(divElement);
     return divElement;
 };
 
 function addCard() {
     const fragment = new DocumentFragment();
-    arr.forEach((word) => {
-        fragment.appendChild(createTestCard(word));
+    arr.forEach((слово) => {
+        fragment.appendChild(createTestCard(слово.перевод));
     });
     examination.innerHTML = "";
     examination.appendChild(fragment);
 }
-
-testing.addEventListener('click', function() {
-    addCard();
-    studying.style.display = "none";
-    examination.style.display = "block";
-});
 
 function checkTranslationsHandler(currentCard) {
     if (!selectedCard) {
@@ -119,8 +114,8 @@ function checkTranslationsHandler(currentCard) {
         currentCard.classList.add('правильно');
         selectedCard = currentCard;
     } else {
-        const wordObject = arr.find(word => word.translation === selectedCard.textContent);
-        if (wordObject && (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent)) {
+        const wordObject = arr.find(слово => слово.перевод === selectedCard.textContent);
+        if (wordObject && (wordObject.перевод === currentCard.textContent || wordObject.слово === currentCard.textContent)) {
             currentCard.style.pointerEvents = "none";
             currentCard.classList.add('правильно');
             currentCard.classList.add('исчезает');
