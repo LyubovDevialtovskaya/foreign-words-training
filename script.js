@@ -75,7 +75,7 @@ back.addEventListener("click", function() {
     back.disabled = false;
    }
 });
-//дабавдяем обработчик при клике на кнопку перемешать
+//дабавляем обработчик при клике на кнопку перемешать
 shuffleWords.addEventListener('click', function() {
     arr.sort(() => Math.random() - 0.5);
     prepareCard(arr[currentIndex]);
@@ -83,47 +83,52 @@ shuffleWords.addEventListener('click', function() {
 totalWord.textContent = arr.length;
 
 let selectedCard;
-//функция тестирования карточек
 function createTestCard(object) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
     const pElement = document.createElement('p');
-    pElement.append(object);
-    divElement.append(pElement);
-    divElement.onclick = () => checkTranslationsHandler(divElement);
+    pElement.textContent = object.translation;
+    divElement.appendChild(pElement);
+    divElement.onclick = () => checkTranslationsHandler(pElement);
     return divElement;
 };
 
 function addCard() {
     const fragment = new DocumentFragment();
     arr.forEach((word) => {
-        fragment.appendChild(createTestCard(word.translation));
+        fragment.appendChild(createTestCard(word));
     });
     examination.innerHTML = "";
     examination.appendChild(fragment);
 }
 
+testing.addEventListener('click', function() {
+    addCard();
+    studying.style.display = "none";
+    examination.style.display = "block";
+});
+
 function checkTranslationsHandler(currentCard) {
     if (!selectedCard) {
         const cards = document.querySelectorAll('.card');
         cards.forEach(card => {
-            card.classList.remove('correct');
-            card.classList.remove('wrong');
+            card.classList.remove('правильно');
+            card.classList.remove('неправильно');
         });
         currentCard.style.pointerEvents = "none";
-        currentCard.classList.add('correct');
+        currentCard.classList.add('правильно');
         selectedCard = currentCard;
     } else {
-        const wordObject = arr.find(word => word.translation === selectedCard.textContent);
-        if (wordObject && (wordObject.translation === currentCard.textContent || wordObject.title === currentCard.textContent)) {
+        const wordObject = arr.find(слово => слово.перевод === selectedCard.textContent);
+        if (wordObject && (wordObject.перевод === currentCard.textContent || wordObject.слово === currentCard.textContent)) {
             currentCard.style.pointerEvents = "none";
-            currentCard.classList.add('correct');
-            currentCard.classList.add('fade-out');
-            selectedCard.classList.add('fade-out');
+            currentCard.classList.add('правильно');
+            currentCard.classList.add('исчезает');
+            selectedCard.classList.add('исчезает');
             const cards = document.querySelectorAll('.card');
             let cardsFaded = true;
             cards.forEach(card => {
-                if (!card.classList.contains('fade-out')) {
+                if (!card.classList.contains('исчезает')) {
                     cardsFaded = false;
                 }
             });
@@ -133,11 +138,11 @@ function checkTranslationsHandler(currentCard) {
                 }, 1000);
             }
         } else {
-            selectedCard.classList.add('wrong');
-            currentCard.classList.add('wrong');
+            selectedCard.classList.add('неправильно');
+            currentCard.classList.add('неправильно');
             setTimeout(() => {
-                selectedCard.classList.remove('wrong');
-                currentCard.classList.remove('wrong');
+                selectedCard.classList.remove('неправильно');
+                currentCard.classList.remove('неправильно');
             }, 500);
             currentCard.style.pointerEvents = "all";
             selectedCard.style.pointerEvents = "all";
