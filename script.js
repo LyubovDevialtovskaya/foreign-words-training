@@ -43,14 +43,14 @@ slider.addEventListener("click", function () {
 });
 
 let currentIndex = 0;
-
 function prepareCard({ title, translation, example }) {
     currentWord.textContent = currentIndex + 1;
     frontTitle.textContent = title;
     backTitle.textContent = translation;
-    example.textContent = example;
+    example.innerText = example; 
     wordsProgress.value = (currentIndex + 1) / arr.length * 100;
 }
+
 prepareCard(arr[currentIndex]);
 
 next.addEventListener("click", function () {
@@ -82,9 +82,20 @@ let selectedCard;
 function createTestCard(object) {
     const divElement = document.createElement('div');
     divElement.classList.add('card');
-    const pElement = document.createElement('p');
-    pElement.textContent = object;
-    divElement.appendChild(pElement);
+    
+    // Создаем переднюю сторону карточки
+    const frontElement = document.createElement('div');
+    frontElement.classList.add('front');
+    frontElement.textContent = object.title;
+    
+    // Создаем заднюю сторону карточки
+    const backElement = document.createElement('div');
+    backElement.classList.add('back');
+    backElement.textContent = object.translation;
+    
+    divElement.appendChild(frontElement);
+    divElement.appendChild(backElement);
+    
     divElement.onclick = () => checkTranslationsHandler(divElement);
     return divElement;
 }
@@ -93,8 +104,7 @@ function addCard() {
     const fragment = new DocumentFragment();
     const newArray = [];
     arr.forEach((array) => {
-        newArray.push(createTestCard(array.translation));
-        newArray.push(createTestCard(array.title));
+        newArray.push(createTestCard(array));
     });
     fragment.append(...newArray.sort(() => Math.random() - 0.5));
     examination.innerHTML = "";
