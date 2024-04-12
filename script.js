@@ -25,11 +25,6 @@ const words = [
         word: 'journey',
         translation: 'путешествие',
         example: "Journey of a lifetime!"
-    },
-    {
-        word: 'pilates',
-        translation: 'пилатес',
-        example: "I have pilates everyday"
     }
 ]
 
