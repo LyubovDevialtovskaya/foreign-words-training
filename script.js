@@ -13,7 +13,7 @@ const back = document.querySelector('#back');
 const next = document.querySelector('#next');
 const studyCards = document.querySelector('.study-cards');
 const examCards = document.querySelector('#exam-cards');
-const examination = document.querySelector('#examination');
+
 
 function randomInteger(max) {
     return Math.floor(Math.random() * (max + 1));
@@ -82,13 +82,6 @@ testing.addEventListener('click', function() {
     addTestCards();
 });
 
-// функция тестирования карточек
-testing.addEventListener('click', function() {
-    studyCards.classList.add('hidden');
-    examCards.classList.remove('hidden');
-    addTestCards();
-});
-
 function createTestCard(wordObject) {
     const divElement = document.createElement('div');
     divElement.classList.add('card', 'back'); // Добавляем класс back для обратной стороны
@@ -148,7 +141,7 @@ function checkTranslationsHandler(currentCard) {
         } else {selectedCard.classList.add('correct');
         currentCard.classList.add('wrong');
         setTimeout(() => {
-            const cards = document.querySelectorAll('card');
+            const cards = document.querySelectorAll('.card');
             cards.forEach(card => {
                 card.classList.remove('correct');
                 card.classList.remove('wrong');
