@@ -77,6 +77,8 @@ shuffleWords.addEventListener('click', function() {
 totalWord.textContent = arr.length;
 
 testing.addEventListener('click', function() {
+    const studyModeBlock = document.querySelector('#study-mode');
+    studyModeBlock.classList.add('hidden');
     studyCards.classList.add('hidden');
     examCards.classList.remove('hidden');
     addTestCards();
