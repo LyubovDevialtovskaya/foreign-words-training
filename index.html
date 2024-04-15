@@ -1,119 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
-    <title>Приложение для изучения иностранных слов</title>
-  </head>
 
-  <body>
-    <div class="container">
-      <header>
-        <a class="logo" href="">Wordsss</a>
-      </header>
-      <main>
-        <div class="sidebar">
-          <div id="study-mode">
-            <h3>
-              Слово <span id="current-word">1</span> из
-              <span id="total-word">5</span>
-            </h3>
-            <progress id="words-progress" value="0" max="100">0%</progress>
-            <button id="shuffle-words">Перемешать слова</button>
-            <button id="add-words">Добавить новое слово</button>
-            <button id="remove-words">Удалить слово</button>
-          </div>
-          <div id="exam-mode" class="hidden">
-            <h3>Правильно отвечено <span id="correct-percent">0%</span></h3>
-            <progress id="exam-progress" value="0" max="100">0%</progress>
-            <p>Время тестирования <span id="time">00:00</span></p>
-            <button id="restart">Начать сначала</button>
-            <button id="go-learn">Вернуться к тренировке</button>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+  <title>Приложение для изучения иностранных слов</title>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <a class="logo" href="">Wordsss</a>
+    </header>
+    <main>
+      <div class="sidebar">
+        <div id="study-mode">
+          <h3>
+            Слово <span id="current-word">1</span> из
+            <span id="total-word">5</span>
+          </h3>
+          <progress id="words-progress" value="0" max="100">0%</progress>
+          <button id="shuffle-words">Перемешать слова</button>
         </div>
-        <div class="content">
-          <div class="study-cards">
-            <div class="slider">
-              <div class="flip-card">
-                <div class="flip-card-inner">
-                  <div class="flip-card-front">
-                    <div id="card-front">
-                      <h1></h1>
-                    </div>
-                  </div>
-                  <div class="flip-card-back">
-                    <div id="card-back">
-                      <h1></h1>
-                      <p><b>Пример:</b> <span></span></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="slider-controls">
-              <button id="back" type="button">◀️</button>
-              <button id="exam" type="button">Тестирование</button>
-              <button id="next" type="button">▶️</button>
-            </div>
-          </div>
-          <div class="add-word-page hidden">
-            <div id="add-block">
-              <form id="form">
-                <div class="form-item">
-                  <label for="eng">Слово на английском</label>
-                  <input type="text" id="eng">
-                </div>
-                <div class="form-item">
-                  <label for="rus">Слово на русском</label>
-                  <input type="text" id="rus">
-                </div>
-                <div class="form-item">
-                  <label for="example">Пример (на английском)</label>
-                  <input type="text" id="example">
-                </div>
-              </form>
-              <div class="modal hidden">
-                <p>Пожалуйста, заполните все поля</p>
-                <button type="button" id="ok">OK</button>
-              </div>          
-            </div>            
-            <div class="add-control">
-              <button type="button" id="add">Добавить слово</button>
-              <button type="button" id="not-add">Не добавлять</button>
-            </div>          
-          </div>
-          <div id="remove-word-page" class="hidden">
-            <h2 class="remove-header">Если слово уже надежно закрепилось в памяти, его можно удалить 🕺</h2>
-            <div class="remove-content"></div>
-            <button type="button" id="ok-remove">OK</button>
-            <template id="removing">
-              <div class="word-row">
-                <p class="word">Слово: <span></span></p>
-                <div class="btn-wrapper">
-                  <button type="button" id="remove">Удалить</button>
-                </div>                 
-              </div>
-            </template>
-          </div>    
-          <div id="exam-cards"></div>
+        <div id="exam-mode" class="hidden">
+          <h3>Правильно отвечено <span id="correct-percent">0%</span></h3>
+          <progress id="exam-progress" value="0" max="100">0%</progress>
+          <p>Время тестирования <span id="time">00:00</span></p>
         </div>
-        <div class="motivation">Давай, ты сможешь!</div>
-      </main>
-      <div class="results-modal hidden">
-        <h1>Твоя статистика 🥺💜</h1>
-        <div class="results-content"></div>
-        <p><b>Время:</b> <span class="time" id="timer">00:00</span></p>
-        <template id="word-stats">
-          <div class="word-stats">
-            <p class="word">Слово: <span></span></p>
-            <p class="attempts">Попытки: <span></span></p>
-          </div>
-        </template>
       </div>
+      <div class="content">
+        <div class="study-cards">
+          <div class="slider">
+            <div class="flip-card">
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <div id="card-front">
+                    <h1></h1>
+                  </div>
+                </div>
+                <div class="flip-card-back" id="card-back">
+                  <div>
+                    <h1></h1>
+                    <p><b>Пример:</b> <span></span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="slider-controls">
+            <button id="back" type="button" disabled>◀️</button>
+            <button id="testing" type="button">Тестирование</button>
+            <button id="next" type="button">▶️</button>
+          </div>
+        </div>
+        <div id="exam-cards"></div>
+      </div>
+      <div class="motivation">Давай, ты сможешь!</div>
+    </main>
+    <div class="results-modal hidden">
+      <h1>Твоя статистика 🥺💜</h1>
+      <div class="results-content"></div>
+      <p><b>Время:</b> <span class="time" id="timer">00:00</span></p>
+      <template id="word-stats">
+        <div class="word-stats">
+          <p class="word">Слово: <span></span></p>
+          <p class="attempts">Попытки: <span></span></p>
+        </div>
+      </template>
     </div>
-    <script src="script.js"></script>
-  </body>
+  </div>
+  <script src="script.js"></script>
+</body>
+
 </html>
